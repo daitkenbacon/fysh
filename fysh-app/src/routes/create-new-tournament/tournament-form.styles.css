@@ -1,0 +1,17 @@
+.tournament-form-container {
+  margin: 10px;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+}
+
+.tournament-form {
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+}
+
+.tournament-form * {
+  margin: 5px;
+  justify-self: center;
+}

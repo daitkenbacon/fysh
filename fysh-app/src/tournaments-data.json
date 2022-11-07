@@ -1,0 +1,114 @@
+[
+    {
+        "id": 1,
+        "name": "Fish Frendzy",
+        "description": "Compete to have the most fish in 24 hours!",
+        "rules": "Fish must be caught by only you.",
+        "registration_fee": 24,
+        "max_participants": 50,
+        "participants": [
+            "Steve M",
+            "Jason R",
+            "Hugh J"
+        ],
+        "start_date": "Sep 6",
+        "end_date": "Sep 7",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Georgia_Aquarium_-_Giant_Grouper_edit.jpg"
+    },
+    {
+        "id": 2,
+        "name": "Fish Frendzy 2",
+        "description": "Compete to have the most fish in 24 hours!",
+        "rules": "Fish must be caught by only you.",
+        "registration_fee": 24,
+        "max_participants": 50,
+        "participants": [
+            "Steve M",
+            "Jason R",
+            "Hugh J"
+        ],
+        "start_date": "Sep 6",
+        "end_date": "Sep 7",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Georgia_Aquarium_-_Giant_Grouper_edit.jpg"
+    },
+    {
+        "id": 3,
+        "name": "Fish Frendzy 3",
+        "description": "Compete to have the most fish in 24 hours!",
+        "rules": "Fish must be caught by only you.",
+        "registration_fee": 24,
+        "max_participants": 50,
+        "participants": [
+            "Steve M",
+            "Jason R",
+            "Hugh J"
+        ],
+        "start_date": "Sep 6",
+        "end_date": "Sep 7",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Georgia_Aquarium_-_Giant_Grouper_edit.jpg"
+    },
+    {
+        "id": 4,
+        "name": "Fish Frendzy 4",
+        "description": "Compete to have the most fish in 24 hours!",
+        "rules": "Fish must be caught by only you.",
+        "registration_fee": 24,
+        "max_participants": 50,
+        "participants": [
+            "Steve M",
+            "Jason R",
+            "Hugh J"
+        ],
+        "start_date": "Sep 6",
+        "end_date": "Sep 7",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Georgia_Aquarium_-_Giant_Grouper_edit.jpg"
+    },
+    {
+        "id": 5,
+        "name": "Fish Frendzy 5",
+        "description": "Compete to have the most fish in 24 hours!",
+        "rules": "Fish must be caught by only you.",
+        "registration_fee": 24,
+        "max_participants": 50,
+        "participants": [
+            "Steve M",
+            "Jason R",
+            "Hugh J"
+        ],
+        "start_date": "Sep 6",
+        "end_date": "Sep 7",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Georgia_Aquarium_-_Giant_Grouper_edit.jpg"
+    },
+    {
+        "id": 6,
+        "name": "Fish Frendzy 6",
+        "description": "Compete to have the most fish in 24 hours!",
+        "rules": "Fish must be caught by only you.",
+        "registration_fee": 24,
+        "max_participants": 50,
+        "participants": [
+            "Steve M",
+            "Jason R",
+            "Hugh J"
+        ],
+        "start_date": "Sep 6",
+        "end_date": "Sep 7",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Georgia_Aquarium_-_Giant_Grouper_edit.jpg"
+    },
+    {
+        "id": 7,
+        "name": "Fish Frendzy 7",
+        "description": "Compete to have the most fish in 24 hours!",
+        "rules": "Fish must be caught by only you.",
+        "registration_fee": 24,
+        "max_participants": 50,
+        "participants": [
+            "Steve M",
+            "Jason R",
+            "Hugh J"
+        ],
+        "start_date": "Sep 6",
+        "end_date": "Sep 7",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Georgia_Aquarium_-_Giant_Grouper_edit.jpg"
+    }
+]

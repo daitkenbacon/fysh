@@ -3,11 +3,23 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from 'react-router-dom';
+import Navbar from './routes/navigation/navbar.component';
+
+import { UserProvider } from './contexts/user.context';
+import { TournamentProvider } from './contexts/tournaments.context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <UserProvider>
+        <TournamentProvider>
+          <Navbar />
+          <App />
+        </TournamentProvider>
+      </UserProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
