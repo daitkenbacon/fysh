@@ -13,6 +13,10 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { Outlet } from 'react-router-dom';
+
+import { ThemeProvider } from '@mui/material';
+import { PrimaryTheme } from '../../components/primary-theme/primary-theme.jsx';
 
 import PropTypes from 'prop-types';
 import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
@@ -21,7 +25,7 @@ import { StaticRouter } from 'react-router-dom/server';
 import { UserContext } from '../../contexts/user.context';
 import { signOutUser } from '../../utils/firebase/firebase.utils';
 
-const pages = ['tournaments', 'new-tournament'];
+const pages = ['tournaments', 'new-tournament', 'about'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const Navbar = () => {
@@ -64,140 +68,145 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static" 
-    sx={{
-      backgroundColor: "#2e7d32",
-      borderRadius: "5px"
-    }}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            FYSH
-          </Typography>
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
+    <div>
+      <AppBar position="static" 
+      sx={{
+        backgroundColor: "#3E606F",
+        borderRadius: "5px",
+        color: '#91AA9D'
+      }}>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="/"
               sx={{
-                display: { xs: 'block', md: 'none' },
+                mr: 2,
+                display: { xs: 'none', md: 'flex' },
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
               }}
             >
-              {pages.map((page) => (
-                    <MenuItem to={`/${page}`} key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
-                    </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            FYSH
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-                component={RouterLink}
-                to={`/${page}`}
+              FYSH
+            </Typography>
+
+            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenNavMenu}
+                color="inherit"
               >
-                {page==='tournaments' ? page : 'new'}
-              </Button>
-            ))}
-          </Box>
-          <Typography sx={{marginRight: 1}} >{currentUser && currentUser.displayName}</Typography>
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <AccountCircleIcon fontSize='large' color='action'/>
+                <MenuIcon />
               </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                sx={{
+                  display: { xs: 'block', md: 'none' },
+                }}
+              >
+                {pages.map((page) => (
+                      <MenuItem to={`/${page}`} key={page} onClick={handleCloseNavMenu}>
+                      <Typography textAlign="center">{page}</Typography>
+                      </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+            <Typography
+              variant="h5"
+              noWrap
+              component="a"
+              href=""
+              sx={{
+                mr: 2,
+                display: { xs: 'flex', md: 'none' },
+                flexGrow: 1,
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
               }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
             >
-              {currentUser &&
-               settings.map((setting) => (
-                <MenuItem component={RouterLink} to={(setting === 'Logout') ? '/' : `/${setting.toLowerCase()}`} key={setting} onClick={setting==='Logout' ? signOutHandler : handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))
-              }
-              {!currentUser && 
-              <MenuItem component={RouterLink} to={`/authentication`} key='login' onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">Login</Typography>
-                </MenuItem>
-              }
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+              FYSH
+            </Typography>
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+              {pages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: '#FCFFF5', display: 'block', textAlign: 'center' }}
+                  component={RouterLink}
+                  to={`/${page}`}
+                >
+                  {page === 'new-tournament' ? 'new' : page}
+                </Button>
+              ))}
+            </Box>
+            {currentUser && <Typography sx={{marginRight: 1}} >{currentUser.displayName ? currentUser.displayName : currentUser.email}</Typography>}
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <AccountCircleIcon fontSize='large' color='action'/>
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {currentUser &&
+                settings.map((setting) => (
+                  <MenuItem component={RouterLink} to={(setting === 'Logout') ? '/' : `/${setting.toLowerCase()}`} key={setting} onClick={setting==='Logout' ? signOutHandler : handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))
+                }
+                {!currentUser && 
+                <MenuItem component={RouterLink} to={`/authentication`} key='login' onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">Login</Typography>
+                  </MenuItem>
+                }
+              </Menu>
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+      <Outlet />
+      
+    </div>
   );
 }
 export default Navbar;
