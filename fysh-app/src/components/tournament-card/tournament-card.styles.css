@@ -1,0 +1,15 @@
+.card-info {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.date-info {
+    display: flex;
+    gap: 7px;
+}
+
+.participants-info {
+    display: flex;
+    gap: 10px;
+}

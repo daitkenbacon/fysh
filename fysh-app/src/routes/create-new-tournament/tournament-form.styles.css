@@ -1,17 +1,39 @@
 .tournament-form-container {
-  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  flex-direction: column;
   justify-content: center;
-  justify-items: center;
-  align-items: center;
+  margin: 1% 15%;
+  border-radius: 10px;
+  background-color: #3E606F;
+  z-index: -1;
+  box-shadow: 5px 5px 20px black;
+  color: #FCFFF5;
 }
 
 .tournament-form {
   display: flex;
   flex-direction: column;
   width: 75%;
+  color: #FCFFF5;
+  align-self: center;
+  gap: 20px;
 }
 
 .tournament-form * {
   margin: 5px;
   justify-self: center;
+  color: #FCFFF5;
+}
+
+.header {
+  display: flex;
+  margin: 1% 15%
+}
+
+.date-forms {
+  display: flex;
+  margin-left: 0;
+  gap: 25px;
 }

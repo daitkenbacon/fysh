@@ -15,9 +15,6 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { Outlet } from 'react-router-dom';
 
-import { ThemeProvider } from '@mui/material';
-import { PrimaryTheme } from '../../components/primary-theme/primary-theme.jsx';
-
 import PropTypes from 'prop-types';
 import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';

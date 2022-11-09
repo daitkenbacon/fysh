@@ -20,6 +20,7 @@ const defaultFormFields = {
         rules: '',
         registration_fee: 0,
         max_participants: 1,
+        participants: [],
         start_date: new Date(),
         end_date: new Date(),
         image: ''
@@ -79,40 +80,49 @@ const TournamentForm = () => {
         const [endValue, setEndValue] = useState(null);
 
     return (
-        <div className='tournament-form-container'>
-            <Typography variant="h2">Create a Tournament</Typography>
-            <div >
+        <div>
+            <div className='header'>
+            <Typography sx={{
+                fontFamily: 'Abril Fatface, cursive',
+                color: '#d1dbbd',
+                fontSize: '5vw'
+            }} variant='h1'
+            >
+                Create a Tournament
+                </Typography>
+            </div>
+            <div className='tournament-form-container'>
                 <form onSubmit={handleSubmit} className="tournament-form">
-                    <TextField variant='standard' label='Name' type='text' required onChange={handleChange} name='name' value={name}/>
-                    <TextField variant='standard' label='Description' type='text' required onChange={handleChange} name='description' value={description}/>
-                    <TextField variant='standard' label='Rules' type='text' required onChange={handleChange} name='rules' value={rules}/>
-
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                            label="Start Date"
-                            value={startValue}
-                            name="start_date"
-                            type="date"
-                            onChange={(newValue) => {
-                                setStartValue(newValue);
-                                }}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                        <DatePicker
-                            label="End Date"
-                            value={endValue}
-                            name="end_date"
-                            onChange={(newValue) => {
-                                setEndValue(newValue);
-                                }}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
+                    <TextField sx={{input: {color: '#FCFFF5'}}} variant='standard' label='Name' type='text' required onChange={handleChange} name='name' value={name}/>
+                    <TextField multiline variant='standard' label='Description' type='text' required onChange={handleChange} name='description' value={description}/>
+                    <TextField multiline variant='standard' label='Rules' type='text' required onChange={handleChange} name='rules' value={rules}/>
+                    <TextField variant='standard' label='Image URL' type='text' required onChange={handleChange} name='image' value={image}/>
+                    <TextField sx={{width: '150px'}} variant='outlined' label='Max participants' type='number' required onChange={handleChange} name='max_participants' value={max_participants}/>
+                    <TextField sx={{width: '150px'}} variant='outlined' label='Registration fee' type='number' required onChange={handleChange} name='registration_fee' value={registration_fee}/>
+                    <div className='date-forms'>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                label="Start Date"
+                                value={startValue}
+                                name="start_date"
+                                type="date"
+                                onChange={(newValue) => {
+                                    setStartValue(newValue);
+                                    }}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
+                            <DatePicker
+                                label="End Date"
+                                value={endValue}
+                                name="end_date"
+                                onChange={(newValue) => {
+                                    setEndValue(newValue);
+                                    }}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
                         </LocalizationProvider>
-
-                    <TextField variant='standard' label='Max participants' type='number' required onChange={handleChange} name='max_participants' value={max_participants}/>
-                    <TextField variant='standard' label='Registration fee' type='number' required onChange={handleChange} name='registration_fee' value={registration_fee}/>
-
-                    <Button variant='outlined' type='submit'>Submit</Button>
+                    </div>
+                    <Button sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2}} variant='contained' type='submit'>Submit</Button>
                 </form>
             </div>
         </div>
