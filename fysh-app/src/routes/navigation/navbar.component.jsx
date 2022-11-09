@@ -124,7 +124,7 @@ const Navbar = () => {
               >
                 {pages.map((page) => (
                       <MenuItem component={RouterLink} to={`/${page}`} key={page} onClick={handleCloseNavMenu}>
-                      <Typography textAlign="center">{page}</Typography>
+                      <Typography textAlign="center">{page === 'new-tournament' ? 'new' : page}</Typography>
                       </MenuItem>
                 ))}
               </Menu>
