@@ -123,7 +123,7 @@ const Navbar = () => {
                 }}
               >
                 {pages.map((page) => (
-                      <MenuItem to={`/${page}`} key={page} onClick={handleCloseNavMenu}>
+                      <MenuItem component={RouterLink} to={`/${page}`} key={page} onClick={handleCloseNavMenu}>
                       <Typography textAlign="center">{page}</Typography>
                       </MenuItem>
                 ))}
