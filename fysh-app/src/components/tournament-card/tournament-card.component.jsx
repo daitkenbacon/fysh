@@ -16,6 +16,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import PropTypes from 'prop-types';
 import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
+import { useNavigate } from 'react-router-dom';
 
 const TournamentCard = ({tournament}) => {
   const {
@@ -25,8 +26,11 @@ const TournamentCard = ({tournament}) => {
     max_participants,
     participants,
     end_date,
-    image
+    image,
+    id
   } = tournament;
+
+  const navigate = useNavigate();
 
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
 
@@ -79,7 +83,7 @@ const TournamentCard = ({tournament}) => {
         </div>
       </CardContent>
       <CardActions>
-        <Button component={RouterLink} to={`/tournaments/:${tournament['id']}`} sx={{color: '#FCFFF5'}} size="small">Details</Button>
+        <Button onClick={() => navigate(`/tournament/${tournament.id}`, tournament.id)} sx={{color: '#FCFFF5'}} size="small">Details</Button>
         <Button sx={{backgroundColor: '#3E606F'}} variant='contained' size="small">${registration_fee} Sign Up</Button>
       </CardActions>
     </Card>

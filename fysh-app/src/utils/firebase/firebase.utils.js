@@ -20,6 +20,7 @@ import {
   query,
   getDocs,
   addDoc,
+  updateDoc,
 } from 'firebase/firestore';
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -111,8 +112,11 @@ export const onAuthStateChangedListener = (callback) =>
 
 export const createDocInCollection = async (objectToAdd, collectionToPut) => {
   const col = await collection(db, collectionToPut);
-  const res = await addDoc(col, objectToAdd);
-  console.log(res);
+  const docRef = await addDoc(col, objectToAdd);
+
+  //logs the doc ID as an object field
+  const res = await updateDoc(docRef,{id: docRef.id})
+
   return res;
 }
 
@@ -132,6 +136,16 @@ export const getDocsInCollection = async (collectionToGetFrom) => {
   }
 }
 
-export const getDocID = async (doc) => {
-  
+export const getDocInCollection = async (collectionToGetFrom, docId) => {
+  try {
+    const docRef = await doc(db, collectionToGetFrom, docId);
+    const docSnap = await getDoc(docRef);
+    if(!docSnap){
+      console.log("No such document exists.")
+      return;
+    }
+    return docSnap;
+  } catch(error) {
+    console.log(error);
+  }
 }

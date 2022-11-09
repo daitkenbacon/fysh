@@ -56,7 +56,7 @@ const TournamentList = () => {
                 {tournaments &&
                     tournaments.map((tournament, index) => {
                         return (
-                            <TournamentCard key={index} tournament={tournament}/>
+                            <TournamentCard key={tournament.id} tournament={tournament}/>
                         )
                     })
                 }
