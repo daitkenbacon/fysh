@@ -4,15 +4,19 @@
   flex-shrink: 0;
   flex-direction: row;
   justify-content: center;
-  margin: 1% 5%;
-  border-radius: 10px;
-  background-color: #3E606F;
-  z-index: -1;
-  box-shadow: 5px 5px 20px black;
+  
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   margin: 1% 5%
+}
+
+.filtered-container {
+  margin: 1% 5%;
+  border-radius: 10px;
+  background-color: #3E606F;
+  z-index: -1;
+  box-shadow: 5px 5px 20px black;
 }

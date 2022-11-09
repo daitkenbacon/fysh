@@ -12,7 +12,8 @@ import { createDocInCollection } from "../../utils/firebase/firebase.utils";
 
 import './tournament-form.styles.css';
 
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from '../../contexts/user.context';
 
 const defaultFormFields = {
         name: '', 
@@ -23,11 +24,13 @@ const defaultFormFields = {
         participants: [],
         start_date: new Date(),
         end_date: new Date(),
-        image: ''
+        image: '',
+        author: null
     }
 
 const TournamentForm = () => {
 
+    const { currentUser } = useContext(UserContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { name, description, rules, registration_fee, max_participants, start_date, end_date, image } = formFields;
 
@@ -51,23 +54,29 @@ const TournamentForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        try {
-            const res = await createDocInCollection(formFields, 'tournaments');
-            console.log(res);
-            resetFormFields();
-        } catch(error) {
-            switch(error.code) {
-                case 'auth/wrong-password':
-                    alert('Incorrect password.');
-                    break;
-                case 'auth/user-not-found':
-                    alert("No user associated with this email.");
-                    break;
-                default:
-                    console.log(error);
+        if(currentUser){
+            try {
+                setFormFields({...formFields, author: currentUser.uid})
+                const res = await createDocInCollection(formFields, 'tournaments');
+                console.log(res);
+                resetFormFields();
+            } catch(error) {
+                switch(error.code) {
+                    case 'auth/wrong-password':
+                        alert('Incorrect password.');
+                        break;
+                    case 'auth/user-not-found':
+                        alert("No user associated with this email.");
+                        break;
+                    default:
+                        console.log(error);
+                }
+                
             }
-            
+        } else {
+            alert("You must be logged in to create a tournament!")
         }
+
     };
 
         const handleChange = (event) => {
