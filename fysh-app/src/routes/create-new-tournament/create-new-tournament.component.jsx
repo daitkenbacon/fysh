@@ -56,7 +56,7 @@ const TournamentForm = () => {
 
         if(currentUser){
             try {
-                setFormFields({...formFields, author: currentUser.uid})
+                setFormFields({...formFields, author_id: currentUser.uid})
                 const res = await createDocInCollection(formFields, 'tournaments');
                 console.log(res);
                 resetFormFields();

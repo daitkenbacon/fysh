@@ -5,7 +5,6 @@ import { getDocInCollection } from "../../utils/firebase/firebase.utils";
 
 const TournamentDetails = () => {
     const { id } = useParams();
-    console.log("The id is: ", id);
     const [tournament, setTournament] = useState([]);
 
     useEffect(() => {
@@ -17,10 +16,10 @@ const TournamentDetails = () => {
         getTournament();
     }, [])
 
-    console.log(tournament);
-
     return(
-        <h1>{tournament && tournament.name}</h1>
+        <div>
+            <h1>{tournament.name && tournament.name}</h1>
+        </div>
     )
 }
 

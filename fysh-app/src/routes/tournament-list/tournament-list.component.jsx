@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
-import { getDocsInCollection } from '../../utils/firebase/firebase.utils';
+import { getDocsInCollection, getDocInCollection } from '../../utils/firebase/firebase.utils';
 import { useEffect, useState } from 'react';
 
 const TournamentList = () => {
