@@ -9,6 +9,8 @@ import TournamentForm from './routes/create-new-tournament/create-new-tournament
 import TournamentDetails from './routes/tournament-details/tournament-details.component';
 import SignUp from './routes/authentication/sign-up.component';
 
+import Checkout from './routes/checkout/Checkout';
+
 
 const App = () => {
   return (
@@ -22,6 +24,7 @@ const App = () => {
           <Route path='/about' element={<About/>}/>
           <Route path='/authentication' element={<Authentication />}/>
           <Route path='/signup' element={<SignUp/>}/>
+          <Route path='/checkout' element={<Checkout/>}/>
       </Routes>
     </div>
   )

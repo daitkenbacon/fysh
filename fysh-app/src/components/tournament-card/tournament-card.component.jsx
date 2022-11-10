@@ -84,7 +84,7 @@ const TournamentCard = ({tournament}) => {
       </CardContent>
       <CardActions>
         <Button onClick={() => navigate(`/tournament/${tournament.id}`, tournament.id)} sx={{color: '#FCFFF5'}} size="small">Details</Button>
-        <Button sx={{backgroundColor: '#3E606F'}} variant='contained' size="small">${registration_fee} Sign Up</Button>
+        <Button onClick={() => navigate('/checkout')} sx={{backgroundColor: '#3E606F'}} variant='contained' size="small">${registration_fee} Register</Button>
       </CardActions>
     </Card>
   );
