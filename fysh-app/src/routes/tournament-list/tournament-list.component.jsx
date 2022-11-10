@@ -56,7 +56,7 @@ const TournamentList = () => {
                 >
                     Tournaments
                 </Typography>
-                <Button component={RouterLink} to='/new-tournament' sx={{height: 50, mt: 5, backgroundColor: '##FCFFF5'}} variant='contained'>New Tournament</Button>
+                <Button component={RouterLink} to='/new-tournament' sx={{height: 50, mt: 5, backgroundColor: '#193441'}} variant='contained'>New Tournament</Button>
 
             </div>
             <div className='filtered-container' >

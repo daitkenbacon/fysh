@@ -37,6 +37,9 @@
 .tournament-details-body img {
     width: 100%;
     border-radius: 5px;
+    max-height: 500px;
+    min-width: 60vw;
+    object-fit:cover;
 }
 
 .tournament-details-body .content {

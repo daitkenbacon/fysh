@@ -15,7 +15,7 @@
 }
 .splash {
   grid-area: 1 / 3 / 3 / 5;
-  margin-top: 2vw;
+  margin-top: 5%;
 }
 
 .splash h1 {
