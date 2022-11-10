@@ -15,6 +15,8 @@ import './tournament-form.styles.css';
 import { useState, useContext } from "react";
 import { UserContext } from '../../contexts/user.context';
 
+import toast, { Toaster } from 'react-hot-toast';
+
 const defaultFormFields = {
         name: '', 
         description: '',
@@ -58,23 +60,13 @@ const TournamentForm = () => {
             try {
                 setFormFields({...formFields, author_id: currentUser.uid})
                 const res = await createDocInCollection(formFields, 'tournaments');
-                console.log(res);
                 resetFormFields();
             } catch(error) {
-                switch(error.code) {
-                    case 'auth/wrong-password':
-                        alert('Incorrect password.');
-                        break;
-                    case 'auth/user-not-found':
-                        alert("No user associated with this email.");
-                        break;
-                    default:
-                        console.log(error);
-                }
+                toast(error);
                 
             }
         } else {
-            alert("You must be logged in to create a tournament!")
+            toast("You must be logged in to create a tournament!")
         }
 
     };
@@ -102,6 +94,7 @@ const TournamentForm = () => {
                 </Typography>
             </div>
             <div className='tournament-form-container'>
+                <Toaster/>
                 <form onSubmit={handleSubmit} className="tournament-form">
                     <TextField sx={{input: {color: '#FCFFF5'}}} variant='standard' label='Name' type='text' required onChange={handleChange} name='name' value={name}/>
                     <TextField multiline variant='standard' label='Description' type='text' required onChange={handleChange} name='description' value={description}/>

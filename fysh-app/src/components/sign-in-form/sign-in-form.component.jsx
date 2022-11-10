@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
+import toast, { Toaster } from 'react-hot-toast';
+
 const defaultFormFields = {
         email: '',
         password: '',
@@ -42,19 +44,18 @@ const SignInForm = () => {
 
         try {
             const res = await signInAuthUserWithEmailAndPassword(email, password);
-            console.log(res);
             resetFormFields();
             navigate('/tournaments')
         } catch(error) {
             switch(error.code) {
                 case 'auth/wrong-password':
-                    alert('Incorrect password.');
+                    toast('Incorrect password.');
                     break;
                 case 'auth/user-not-found':
-                    alert("No user associated with this email.");
+                    toast("No user associated with this email.");
                     break;
                 default:
-                    console.log(error);
+                    toast(error);
             }
             
         }
@@ -73,7 +74,7 @@ const SignInForm = () => {
     return (
         <Box className='login-form'
         >
-            
+            <Toaster/>
             <form onSubmit={handleSubmit} noValidate autoComplete="off">
                 <div className="header">
                     <Typography variant="h4">I already have an account</Typography>

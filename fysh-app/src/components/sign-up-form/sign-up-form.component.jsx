@@ -3,6 +3,8 @@ import FormInput from "../form-input/form-input.component";
 import {Box, Button, Typography} from '@mui/material';
 import { useNavigate } from "react-router-dom";
 
+import toast, { Toaster } from 'react-hot-toast';
+
 import './sign-up-form.styles.css';
 
 import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from "../../utils/firebase/firebase.utils";
@@ -27,7 +29,7 @@ const SignUpForm = () => {
         event.preventDefault();
 
         if (password !== confirmPassword) {
-            alert('passwords do not match');
+            toast('passwords do not match');
             return;
         }
 
@@ -39,7 +41,7 @@ const SignUpForm = () => {
             navigate('/tournaments');
         } catch (error) {
             if (error.code === 'auth/email-already-in-use') {
-                alert('Cannot create user, email already in use');
+                toast('Cannot create user, email already in use');
         } else {
             console.log('user creation encountered an error', error);
         }
@@ -61,6 +63,7 @@ const SignUpForm = () => {
             alignItems: "center"
         }} 
         >
+            <Toaster />
             <form onSubmit={handleSubmit}>
                 <div className="header">
                     <Typography variant="h4">Don't have an account?</Typography>
