@@ -1,4 +1,3 @@
-//import tournaments from '../../tournaments-data.json'
 import './tournament-list.styles.css'
 
 import TournamentCard from '../../components/tournament-card/tournament-card.component';
@@ -13,22 +12,7 @@ import { useEffect, useState } from 'react';
 
 const TournamentList = () => {
 
-    function Router(props) {
-        const { children } = props;
-        if (typeof window === 'undefined') {
-        return <StaticRouter location="/">{children}</StaticRouter>;
-        }
-
-        return <MemoryRouter>{children}</MemoryRouter>;
-    }
-
-    
     const [tournaments, setTournaments] = useState([]);
-
-    
-  Router.propTypes = {
-    children: PropTypes.node,
-  };
 
     useEffect(() => {
         async function getTournaments() {
@@ -63,19 +47,20 @@ const TournamentList = () => {
     return (
         <div>
             <div className='header'>
-            <Typography sx={{
-                fontFamily: 'Abril Fatface, cursive',
-                color: '#d1dbbd',
-                fontSize: '6vw'
-            }} variant='h1'
-            >
-                Tournaments
-            </Typography>
-            <Button component={RouterLink} to='/new-tournament' sx={{height: 50, mt: 5, backgroundColor: '#3E606F'}} variant='contained'>New Tournament</Button>
+                <Typography sx={{
+                    fontFamily: 'Abril Fatface, cursive',
+                    color: '#d1dbbd',
+                    textShadow: '2px 2px 5px #193441',
+                    fontSize: '6vw'
+                }} variant='h1'
+                >
+                    Tournaments
+                </Typography>
+                <Button component={RouterLink} to='/new-tournament' sx={{height: 50, mt: 5, backgroundColor: '##FCFFF5'}} variant='contained'>New Tournament</Button>
 
             </div>
             <div className='filtered-container' >
-                <TextField sx={{mt: 1, ml: '10%'}} variant='outlined' type='search' value={search} placeholder='Filter' onChange={filterList}/>
+                <TextField sx={{margin: '2%'}} variant='outlined' type='search' value={search} placeholder='Filter' onChange={filterList}/>
                 <div className='tournaments-container'>
                     {(filteredTournaments && filteredTournaments.length > 0) ?
                         filteredTournaments.map((tournament) => {

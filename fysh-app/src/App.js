@@ -7,6 +7,7 @@ import TournamentList from './routes/tournament-list/tournament-list.component';
 import Authentication from './routes/authentication/authentication.component';
 import TournamentForm from './routes/create-new-tournament/create-new-tournament.component';
 import TournamentDetails from './routes/tournament-details/tournament-details.component';
+import SignUp from './routes/authentication/sign-up.component';
 
 
 const App = () => {
@@ -18,8 +19,9 @@ const App = () => {
           <Route path='/tournaments' element={<TournamentList/>}/>
           <Route path='/tournament/:id' element={<TournamentDetails/>}/>
           <Route path='/new-tournament' element={<TournamentForm/>}/>
-          <Route path='about' element={<About/>}/>
-          <Route path='authentication' element={<Authentication />}/>
+          <Route path='/about' element={<About/>}/>
+          <Route path='/authentication' element={<Authentication />}/>
+          <Route path='/signup' element={<SignUp/>}/>
       </Routes>
     </div>
   )

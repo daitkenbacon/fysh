@@ -9,12 +9,15 @@
 
 .header {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   margin: 1% 5%
 }
 
 .filtered-container {
   margin: 1% 5%;
+  display: flex;
+  flex-direction: column;
   border-radius: 10px;
   background-color: #3E606F;
   z-index: -1;

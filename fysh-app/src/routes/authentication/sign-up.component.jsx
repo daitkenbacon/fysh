@@ -1,11 +1,10 @@
 import SignUpForm from '../../components/sign-up-form/sign-up-form.component';
-import SignInForm from '../../components/sign-in-form/sign-in-form.component';
 
 import { Box } from '@mui/material';
 
 //import './authentication.styles.scss';
 
-const Authentication = () => {
+const SignUp = () => {
 
     return(
         <Box className='authentication-container'
@@ -16,10 +15,9 @@ const Authentication = () => {
             margin: 8
         }}
         >
-            <SignInForm />
-            {/* <SignUpForm /> */}
+            <SignUpForm />
         </Box>
     )
 }
 
-export default Authentication;
+export default SignUp;

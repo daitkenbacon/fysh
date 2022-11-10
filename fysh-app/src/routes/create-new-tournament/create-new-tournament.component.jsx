@@ -94,7 +94,8 @@ const TournamentForm = () => {
             <Typography sx={{
                 fontFamily: 'Abril Fatface, cursive',
                 color: '#d1dbbd',
-                fontSize: '5vw'
+                fontSize: '5vw',
+                textShadow: '2px 2px 5px #193441'
             }} variant='h1'
             >
                 Create a Tournament
