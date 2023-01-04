@@ -9,6 +9,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { createDocInCollection } from "../../utils/firebase/firebase.utils";
+import { storage } from '../../utils/firebase/firebase.utils';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 import './tournament-form.styles.css';
 
@@ -16,6 +18,7 @@ import { useState, useContext } from "react";
 import { UserContext } from '../../contexts/user.context';
 
 import toast, { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 const defaultFormFields = {
         name: '', 
@@ -34,6 +37,9 @@ const TournamentForm = () => {
 
     const { currentUser } = useContext(UserContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
+    const [selectedImage, setSelectedImage] = useState('');
+    const [previewImage, setPreviewImage] = useState('');
+    const [percent, setPercent] = useState(0);
     const { name, description, rules, registration_fee, max_participants, start_date, end_date, image } = formFields;
 
     function Router(props) {
@@ -53,6 +59,16 @@ const TournamentForm = () => {
         setFormFields(defaultFormFields);
     };
 
+    useEffect(() => {
+        if(!selectedImage) {
+            setPreviewImage(undefined);
+            return;
+        }
+
+        const objectUrl = URL.createObjectURL(selectedImage);
+        setPreviewImage(objectUrl);
+    }, [selectedImage])
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -60,6 +76,7 @@ const TournamentForm = () => {
             try {
                 setFormFields({...formFields, author_id: currentUser.uid})
                 const res = await createDocInCollection(formFields, 'tournaments');
+                toast('Tournament created!');
                 resetFormFields();
             } catch(error) {
                 toast(error);
@@ -71,14 +88,51 @@ const TournamentForm = () => {
 
     };
 
-        const handleChange = (event) => {
-            const { name, value } = event.target;
+    const handleUpload = () => {
+        if (!selectedImage) {
+            toast('Please choose a file before uploading.');
+            return;
+        }
 
-            setFormFields({ ...formFields, [name]: value });
-        };
+        const storageRef = ref(storage, `/tournaments/${selectedImage.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, selectedImage);
 
-        const [startValue, setStartValue] = useState(null);
-        const [endValue, setEndValue] = useState(null);
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                const percent = Math.round(
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                );
+
+                setPercent(percent);
+            },
+            (err) => toast(err),
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                    setFormFields({ ...formFields, image: url});
+                })
+            }
+        )
+
+    }
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+
+        setFormFields({ ...formFields, [name]: value });
+    };
+
+    const handleFileChange = (event) => {
+    if (!event.target.files || event.target.files.length === 0) {
+        setSelectedImage(undefined);
+        return;
+    }
+
+    setSelectedImage(event.target.files[0]);
+    }
+
+    const [startValue, setStartValue] = useState(null);
+    const [endValue, setEndValue] = useState(null);
 
     return (
         <div>
@@ -99,7 +153,7 @@ const TournamentForm = () => {
                     <TextField sx={{input: {color: '#FCFFF5'}}} variant='standard' label='Name' type='text' required onChange={handleChange} name='name' value={name}/>
                     <TextField multiline variant='standard' label='Description' type='text' required onChange={handleChange} name='description' value={description}/>
                     <TextField multiline variant='standard' label='Rules' type='text' required onChange={handleChange} name='rules' value={rules}/>
-                    <TextField variant='standard' label='Image URL' type='text' required onChange={handleChange} name='image' value={image}/>
+                    {/* <TextField variant='standard' label='Image URL' type='text' required onChange={handleChange} name='image' value={image}/> */}
                     <TextField sx={{width: '150px'}} variant='outlined' label='Max participants' type='number' required onChange={handleChange} name='max_participants' value={max_participants}/>
                     <TextField sx={{width: '150px'}} variant='outlined' label='Registration fee' type='number' required onChange={handleChange} name='registration_fee' value={registration_fee}/>
                     <div className='date-forms'>
@@ -125,6 +179,23 @@ const TournamentForm = () => {
                             />
                         </LocalizationProvider>
                     </div>
+                    {selectedImage && <img src={previewImage}/>}
+                    <Button
+                        variant="contained"
+                        component="label"
+                        >
+                            Add an image
+                            <input
+                                type="file"
+                                accept='image/*'
+                                onChange={handleFileChange}
+                                hidden
+                            />
+                    </Button>
+                    {
+                        selectedImage && <Button onClick={handleUpload}>Upload file</Button>
+                    }
+                    {percent>0 && <p>{percent}%</p>}
                     <Button sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2}} variant='contained' type='submit'>Submit</Button>
                 </form>
             </div>
