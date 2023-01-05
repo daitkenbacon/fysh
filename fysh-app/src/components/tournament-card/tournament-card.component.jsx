@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
+
+import { getDocInCollection } from '../../utils/firebase/firebase.utils';
 
 import './tournament-card.styles.css'
 
@@ -27,10 +30,12 @@ const TournamentCard = ({tournament}) => {
     participants,
     end_date,
     image,
-    id
+    id,
+    author,
   } = tournament;
 
   const navigate = useNavigate();
+  const [userName, setUserName] = useState('Fysher');
 
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
 
@@ -47,8 +52,19 @@ const TournamentCard = ({tournament}) => {
     children: PropTypes.node,
   };
 
+  useEffect(() => {
+          async function getUsername() {
+              const user = await getDocInCollection('users', author);
+              setUserName(user.data().displayName);
+          }
+
+          getUsername();
+      }, [])
+
   return (
-    <Card sx={{ 
+    <Card 
+        className='card-container'
+        sx={{ 
         width: 325,
         borderRadius: 2,
         margin: 2,
@@ -62,15 +78,19 @@ const TournamentCard = ({tournament}) => {
         image={image}
         alt={name}
       />
-      <CardContent sx={{
+      <CardContent 
+        className='card-content'
+        sx={{
         color: '#d1dbbd;'
       }}>
         <Typography gutterBottom variant="h5" component="div">
           {name}
         </Typography>
-        <Typography variant="body2" color="#FCFFF5">
-          {description}
+        <Typography variant="body2" color="#FFFFFF">
+          {description.substring(0, 120)}
+          {description.length > 100 && '...'}
         </Typography>
+        <Typography variant='body2' color="#b3b3b3">Hosted by {userName}</Typography>
         <div className='card-info'>
           <div className='date-info'>
             <CalendarMonthIcon />
@@ -82,9 +102,9 @@ const TournamentCard = ({tournament}) => {
           </div>
         </div>
       </CardContent>
-      <CardActions>
+      <CardActions className='card-buttons'>
         <Button onClick={() => navigate(`/tournament/${tournament.id}`, tournament.id)} sx={{color: '#FCFFF5'}} size="small">Details</Button>
-        <Button onClick={() => navigate('/checkout')} sx={{backgroundColor: '#3E606F'}} variant='contained' size="small">${registration_fee} Register</Button>
+        <Button disabled={!(participants && participants.length < max_participants)} onClick={() => navigate('/checkout')} sx={{backgroundColor: '#3E606F'}} variant='contained' size="small">${registration_fee} Register</Button>
       </CardActions>
     </Card>
   );

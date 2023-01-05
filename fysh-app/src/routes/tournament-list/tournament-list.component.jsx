@@ -40,9 +40,7 @@ const TournamentList = () => {
         }
 
         setSearch(keyword);
-        console.log(keyword);
     }
-    console.log(filteredTournaments);
     
     return (
         <div>

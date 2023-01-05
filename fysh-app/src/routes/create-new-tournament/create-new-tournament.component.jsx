@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import PropTypes from 'prop-types';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { createDocInCollection } from "../../utils/firebase/firebase.utils";
@@ -30,7 +30,7 @@ const defaultFormFields = {
         start_date: new Date(),
         end_date: new Date(),
         image: '',
-        author: null
+        author: ''
     }
 
 const TournamentForm = () => {
@@ -40,6 +40,7 @@ const TournamentForm = () => {
     const [selectedImage, setSelectedImage] = useState('');
     const [previewImage, setPreviewImage] = useState('');
     const [percent, setPercent] = useState(0);
+    const navigate = useNavigate();
     const { name, description, rules, registration_fee, max_participants, start_date, end_date, image } = formFields;
 
     function Router(props) {
@@ -72,25 +73,30 @@ const TournamentForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        if(percent > 0 && percent < 100) {
+            toast.error('Wait for image to upload before submitting.')
+            return;
+        }
+
         if(currentUser){
             try {
-                setFormFields({...formFields, author_id: currentUser.uid})
+                setFormFields({...formFields, author: currentUser.uid});
                 const res = await createDocInCollection(formFields, 'tournaments');
-                toast('Tournament created!');
-                resetFormFields();
+                // resetFormFields();
+                navigate('/tournaments');
             } catch(error) {
-                toast(error);
+                toast.error(error);
                 
             }
         } else {
-            toast("You must be logged in to create a tournament!")
+            toast.error("You must be logged in to create a tournament!")
         }
 
     };
 
     const handleUpload = () => {
         if (!selectedImage) {
-            toast('Please choose a file before uploading.');
+            toast.error('Please choose a file before uploading.');
             return;
         }
 
@@ -106,7 +112,7 @@ const TournamentForm = () => {
 
                 setPercent(percent);
             },
-            (err) => toast(err),
+            (err) => toast.error(err),
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     setFormFields({ ...formFields, image: url});
@@ -180,23 +186,26 @@ const TournamentForm = () => {
                         </LocalizationProvider>
                     </div>
                     {selectedImage && <img src={previewImage}/>}
-                    <Button
-                        variant="contained"
-                        component="label"
-                        >
-                            Add an image
-                            <input
-                                type="file"
-                                accept='image/*'
-                                onChange={handleFileChange}
-                                hidden
-                            />
-                    </Button>
-                    {
-                        selectedImage && <Button onClick={handleUpload}>Upload file</Button>
-                    }
-                    {percent>0 && <p>{percent}%</p>}
-                    <Button sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2}} variant='contained' type='submit'>Submit</Button>
+                    <Box>
+                        <Button
+                            variant="contained"
+                            component="label"
+                            sx={{width: 150, alignSelf: 'left', backgroundColor: '#91AA9D', color: '#FCFFF5', mr: 2, mb: 2, '&:hover': {backgroundColor: '#576a60'}}}
+                            >
+                                Add an image
+                                <input
+                                    type="file"
+                                    accept='image/*'
+                                    onChange={handleFileChange}
+                                    hidden
+                                />
+                        </Button>
+                        {selectedImage && (percent < 100) &&
+                            <Button variant='contained' sx={{width: 150, alignSelf: 'left', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} onClick={handleUpload}>Upload file</Button>
+                        }
+                        {percent>0 && <p>{percent}%</p>}
+                    </Box>
+                    <Button sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} variant='contained' type='submit'>Submit</Button>
                 </form>
             </div>
         </div>
