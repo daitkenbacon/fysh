@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 
-import { getDocInCollection } from '../../utils/firebase/firebase.utils';
+import { getDocInCollection, updateDocInCollection } from '../../utils/firebase/firebase.utils';
 
 import './tournament-card.styles.css'
+
+import { UserContext } from '../../contexts/user.context';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -15,6 +17,8 @@ import Typography from '@mui/material/Typography';
 
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GroupsIcon from '@mui/icons-material/Groups';
+
+import { toast, Toaster } from 'react-hot-toast';
 
 import PropTypes from 'prop-types';
 import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
@@ -36,6 +40,8 @@ const TournamentCard = ({tournament}) => {
 
   const navigate = useNavigate();
   const [userName, setUserName] = useState('Fysher');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const { currentUserUID, currentUser } = useContext(UserContext);
 
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
 
@@ -61,6 +67,41 @@ const TournamentCard = ({tournament}) => {
           getUsername();
       }, [])
 
+
+  async function handleRegister() {
+    setIsRegistering(true);
+    console.log('Registering...');
+    if(!currentUserUID) {
+      toast.error('You must be logged in to register for a tournament.');
+      setIsRegistering(false);
+      console.log('Done  Registering... No user.', currentUserUID);
+      return;
+    }
+    try {
+      const tournDoc = await getDocInCollection('tournaments', id);
+      const participantsQuery = tournDoc.data().participants;
+      console.log(participantsQuery, currentUserUID);
+        if(participantsQuery.length >= max_participants){
+          toast.error('Tournament is full.');
+          setIsRegistering(false);
+          return;
+        }
+        if(participantsQuery.includes(currentUserUID)) {
+          toast.error('You are already registered for this tournament!')
+          setIsRegistering(false);
+          return;
+        }
+      const res = updateDocInCollection('tournaments', id, {participants: [...participants, currentUserUID]})
+      setIsRegistering(false);
+      console.log('Done  Registering... Success.');
+    } catch (err) {
+      toast.error(err);
+      setIsRegistering(false);
+      console.log('Done  Registering... Error.');
+      console.error(err);
+    }
+  }
+
   return (
     <Card 
         className='card-container'
@@ -72,6 +113,7 @@ const TournamentCard = ({tournament}) => {
         backgroundColor: '#193441',
         boxShadow: '3px 3px 10px'
          }}>
+           <Toaster />
       <CardMedia
         component="img"
         height="160"
@@ -104,7 +146,7 @@ const TournamentCard = ({tournament}) => {
       </CardContent>
       <CardActions className='card-buttons'>
         <Button onClick={() => navigate(`/tournament/${tournament.id}`, tournament.id)} sx={{color: '#FCFFF5'}} size="small">Details</Button>
-        <Button disabled={!(participants && participants.length < max_participants)} onClick={() => navigate('/checkout')} sx={{backgroundColor: '#3E606F'}} variant='contained' size="small">${registration_fee} Register</Button>
+        <Button disabled={!(participants && participants.length < max_participants)} onClick={() => handleRegister()} sx={{backgroundColor: '#3E606F'}} variant='contained' size="small">${registration_fee} Register</Button>
       </CardActions>
     </Card>
   );

@@ -113,13 +113,24 @@ export const onAuthStateChangedListener = (callback) =>
   onAuthStateChanged(auth, callback);
 
 export const createDocInCollection = async (objectToAdd, collectionToPut) => {
-  const col = await collection(db, collectionToPut);
+  const col = collection(db, collectionToPut);
   const docRef = await addDoc(col, objectToAdd);
 
   //logs the doc ID as an object field
   const res = await updateDoc(docRef,{id: docRef.id})
 
   return res;
+}
+
+export const updateDocInCollection = async (collectionName, docId, data) => {
+  try {
+    const docRef = doc(db, collectionName, docId);
+    const res = await updateDoc(docRef,data);
+    console.log('Updating ', docRef, ' with ', data)
+    return res;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 export const getDocsInCollection = async (collectionToGetFrom) => {
@@ -140,7 +151,7 @@ export const getDocsInCollection = async (collectionToGetFrom) => {
 
 export const getDocInCollection = async (collectionToGetFrom, docId) => {
   try {
-    const docRef = await doc(db, collectionToGetFrom, docId);
+    const docRef = doc(db, collectionToGetFrom, docId);
     const docSnap = await getDoc(docRef);
     if(!docSnap){
       console.log("No such document exists.")
