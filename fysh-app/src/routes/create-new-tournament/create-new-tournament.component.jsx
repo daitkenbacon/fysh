@@ -35,7 +35,7 @@ const defaultFormFields = {
 
 const TournamentForm = () => {
 
-    const { currentUser } = useContext(UserContext);
+    const { currentUser, currentUserUID } = useContext(UserContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const [selectedImage, setSelectedImage] = useState('');
     const [previewImage, setPreviewImage] = useState('');
@@ -78,7 +78,7 @@ const TournamentForm = () => {
             return;
         }
 
-        if(currentUser){
+        if(currentUserUID){
             try {
                 setFormFields({...formFields, author: currentUser.uid});
                 const res = await createDocInCollection(formFields, 'tournaments');
@@ -112,7 +112,7 @@ const TournamentForm = () => {
 
                 setPercent(percent);
             },
-            (err) => toast.error(err),
+            (err) => {toast.error(err); console.log(err)},
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     setFormFields({ ...formFields, image: url});
@@ -129,12 +129,16 @@ const TournamentForm = () => {
     };
 
     const handleFileChange = (event) => {
-    if (!event.target.files || event.target.files.length === 0) {
-        setSelectedImage(undefined);
-        return;
-    }
-
-    setSelectedImage(event.target.files[0]);
+        const image = event.target.files[0];
+        if (!event.target.files || event.target.files.length === 0) {
+            setSelectedImage(undefined);
+            return;
+        }
+        if(image.size > (5 * 1024 * 1024)){
+            toast.error('File must be less than 5MB.')
+        } else {
+            setSelectedImage(image);
+        }
     }
 
     const [startValue, setStartValue] = useState(null);
