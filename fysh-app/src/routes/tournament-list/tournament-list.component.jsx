@@ -1,7 +1,7 @@
 import './tournament-list.styles.css'
 
 import TournamentCard from '../../components/tournament-card/tournament-card.component';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, TextField, Typography, CircularProgress } from '@mui/material';
 
 import PropTypes from 'prop-types';
 import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
@@ -13,12 +13,14 @@ import { useEffect, useState } from 'react';
 const TournamentList = () => {
 
     const [tournaments, setTournaments] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         async function getTournaments() {
             const t = await getDocsInCollection('tournaments');
             setTournaments(t);
             setFilteredTournaments(t);
+            setIsLoading(false);
         }
 
         getTournaments();
@@ -58,7 +60,10 @@ const TournamentList = () => {
 
             </div>
             <div className='filtered-container' >
-                <TextField sx={{margin: '2%'}} variant='outlined' type='search' value={search} placeholder='Filter' onChange={filterList}/>
+                <TextField sx={{margin: '2%'}} variant='outlined' type='search' value={search} placeholder='Search by title' onChange={filterList}/>
+                {isLoading &&
+                    <CircularProgress color='info' sx={{margin: 'auto'}}/>
+                }
                 <div className='tournaments-container'>
                     {(filteredTournaments && filteredTournaments.length > 0) ?
                         filteredTournaments.map((tournament) => {
@@ -66,7 +71,7 @@ const TournamentList = () => {
                                 <TournamentCard key={tournament.id} tournament={tournament}/>
                             )
                         }) :
-                        <Typography>No tournaments found!</Typography>
+                        ''
                     }
                 </div>
             </div>

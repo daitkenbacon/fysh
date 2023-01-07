@@ -4,7 +4,8 @@
   flex-shrink: 0;
   flex-direction: row;
   justify-content: center;
-  
+  margin-bottom: 10px;
+  min-height: 500px;
 }
 
 .header {
