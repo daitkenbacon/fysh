@@ -20,7 +20,6 @@ export const UserProvider = ({ children }) => {
             if(user){
                 createUserDocumentFromAuth(user);
                 setCurrentUserUID(user.uid);
-                console.log(currentUserUID);
             }
             setCurrentUser(user); //listener either returns null or a user, whether logged in, signing out, or default. Can set it here since listener is active to help performance
         })

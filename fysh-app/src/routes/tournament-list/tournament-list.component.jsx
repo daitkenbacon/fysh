@@ -34,7 +34,8 @@ const TournamentList = () => {
 
         if(keyword && (keyword !== '')){
             const results = tournaments.filter((t) => {
-                return t.name.toLowerCase().includes(keyword);
+                //If keyword exists in tournament's title or description
+                return (t.name.toLowerCase().includes(keyword) || t.description.toLowerCase().includes(keyword));
             });
             setFilteredTournaments(results);
         } else {
@@ -60,7 +61,7 @@ const TournamentList = () => {
 
             </div>
             <div className='filtered-container' >
-                <TextField sx={{margin: '2%'}} variant='outlined' type='search' value={search} placeholder='Search by title' onChange={filterList}/>
+                <TextField sx={{margin: '2%'}} variant='outlined' type='search' value={search} placeholder='Search for a tournament' onChange={filterList}/>
                 {isLoading &&
                     <CircularProgress color='info' sx={{margin: 'auto'}}/>
                 }

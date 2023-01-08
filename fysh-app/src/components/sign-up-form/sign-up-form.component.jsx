@@ -43,7 +43,8 @@ const SignUpForm = () => {
             if (error.code === 'auth/email-already-in-use') {
                 toast('Cannot create user, email already in use');
         } else {
-            console.log('user creation encountered an error', error);
+            toast('Could not register user: ', error);
+            console.log(error);
         }
         }
     };

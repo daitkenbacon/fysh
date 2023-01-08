@@ -45,19 +45,6 @@ const TournamentCard = ({tournament}) => {
 
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
 
-  function Router(props) {
-    const { children } = props;
-    if (typeof window === 'undefined') {
-    return <StaticRouter location="/">{children}</StaticRouter>;
-    }
-
-    return <MemoryRouter>{children}</MemoryRouter>;
-  }
-
-    Router.propTypes = {
-    children: PropTypes.node,
-  };
-
   useEffect(() => {
           async function getUsername() {
               const user = await getDocInCollection('users', author);
@@ -67,20 +54,22 @@ const TournamentCard = ({tournament}) => {
           getUsername();
       }, [])
 
+  const delay = (millisec) => {
+    return new Promise(resolve => {
+      setTimeout(() => { resolve('') }, millisec);
+    })
+  }
 
   async function handleRegister() {
     setIsRegistering(true);
-    console.log('Registering...');
     if(!currentUserUID) {
       toast.error('You must be logged in to register for a tournament.');
       setIsRegistering(false);
-      console.log('Done  Registering... No user.', currentUserUID);
       return;
     }
     try {
       const tournDoc = await getDocInCollection('tournaments', id);
       const participantsQuery = tournDoc.data().participants;
-      console.log(participantsQuery, currentUserUID);
         if(participantsQuery.length >= max_participants){
           toast.error('Tournament is full.');
           setIsRegistering(false);
@@ -91,13 +80,15 @@ const TournamentCard = ({tournament}) => {
           setIsRegistering(false);
           return;
         }
-      const res = updateDocInCollection('tournaments', id, {participants: [...participants, currentUserUID]})
+      updateDocInCollection('tournaments', id, {participants: [...participants, currentUserUID]})
+      toast.success(`You registered for ${name}!`);
+      await delay(1000);
       setIsRegistering(false);
-      console.log('Done  Registering... Success.');
+      await delay(1000);
+      navigate(`/tournament/${id}`);
     } catch (err) {
       toast.error(err);
       setIsRegistering(false);
-      console.log('Done  Registering... Error.');
       console.error(err);
     }
   }
@@ -146,7 +137,14 @@ const TournamentCard = ({tournament}) => {
       </CardContent>
       <CardActions className='card-buttons'>
         <Button onClick={() => navigate(`/tournament/${tournament.id}`, tournament.id)} sx={{color: '#FCFFF5'}} size="small">Details</Button>
-        <Button disabled={!(participants && participants.length < max_participants)} onClick={() => handleRegister()} sx={{backgroundColor: '#3E606F'}} variant='contained' size="small">${registration_fee} Register</Button>
+                <Button 
+        disabled={!(participants && participants.length < max_participants)} onClick={() => handleRegister()} 
+        sx={{backgroundColor: '#3E606F'}} 
+        variant='contained' 
+        size="small"
+        >
+            ${registration_fee} Register
+        </Button>
       </CardActions>
     </Card>
   );

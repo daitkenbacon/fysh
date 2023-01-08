@@ -1,15 +1,45 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom"
 
-import './tournament-details.styles.css';
+import './tournament-details.styles.scss';
+import { UserContext } from '../../contexts/user.context';
 
-import { getDocInCollection } from "../../utils/firebase/firebase.utils";
+import { getDocInCollection, updateDocInCollection } from "../../utils/firebase/firebase.utils";
+import { Modal, Button, Box } from "@mui/material";
+
+import { toast, Toaster } from 'react-hot-toast';
+import CatchForm from "../../components/catch-form/catch-form.component";
+
+const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
 
 const TournamentDetails = () => {
+    const { currentUserUID } = useContext(UserContext);
     const { id } = useParams();
     const [tournament, setTournament] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [openModal, setOpenModal] = useState(false);
+    const handleOpen = () => {
+        if(!participants.includes(currentUserUID)){
+            toast.error('You are not registered for this tournament!')
+            return;
+        } else {
+            setOpenModal(true);
+        }
+    }
+    const handleClose = () => setOpenModal(false);
+
+    const { name, description, image, rules, participants, max_participants, registration_fee } = tournament;
 
     useEffect(() => {
         async function getTournament() {
@@ -25,36 +55,53 @@ const TournamentDetails = () => {
         getTournament();
     }, [])
 
+    
+
     return(tournament &&
         <div className="tournament-details-container">
-            <h1>{tournament.name}</h1>
+            <Toaster/>
+            <h1>{name}</h1>
             <div className="tournament-details-body">
-                <img src={tournament.image}/>
-                <div className='content'>
+                <img alt={name} src={image}/>
+                <div className='content-top'>
                     <div>
                         <h4>Description</h4>
-                        <p>{tournament.description}</p>
+                        <p>{description}</p>
                     </div>
                     <div >
                         <h4>Rules</h4>
-                        <p>{tournament.rules}</p>
+                        <p>{rules}</p>
                     </div>
                 </div>
-                <div className='content'>
+                <div className='content-bottom'>
                     <div >
-                        <h4>Dates</h4>
+                        <h4>Tournament Dates</h4>
                         <p>{startDate} - {endDate}</p>
                     </div>
                     <div >
                         <h4>Registered Fyshers</h4>
-                        <p>{tournament.participants ? tournament.participants.length : 0}/{tournament.max_participants}</p>
+                        <p>{participants ? participants.length : 0}/{max_participants}</p>
                     </div>
                     <div >
                         <h4>Registration Fee</h4>
-                        <p>${tournament.registration_fee}</p>
+                        <p>${registration_fee}</p>
                     </div>
                 </div>
             </div>
+            <div className="tournament-details-submissions">
+                <h2>Submissions</h2>
+                <Button onClick={handleOpen} variant='contained'>Add a Catch</Button>
+            </div>
+            <Modal
+                open={openModal}
+                onClose={handleClose}
+                aria-labelledby="Add a Catch"
+                aria-describedby="Upload a catch to submit to the tournament."
+            >
+                <Box sx={modalStyle}>
+                    <CatchForm userID={currentUserUID} tournament={tournament}/>
+                </Box>
+            </Modal>
         </div>
     )
 }

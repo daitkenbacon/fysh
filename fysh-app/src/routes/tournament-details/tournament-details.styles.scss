@@ -1,0 +1,83 @@
+.tournament-details-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    justify-self: center;
+    margin: auto;
+
+    h1 {
+        font-family: "Abril Fatface", cursive;
+        color: #d1dbbd;
+        font-size: 5vw;
+        text-shadow: 2px 2px 5px #193441;
+    }
+    
+    .tournament-details-body {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        margin: 25px;
+        background-color: #3E606F;
+        border-radius: 5px;
+        align-items: center;
+        text-align: center;
+    
+        h4 {
+            margin: 25px 25px 0px 25px;
+            color: #FCFFF5;
+        }
+    
+        p {
+            margin: 10px 25px 25px 25px;
+            color: #FCFFF5;
+            background-color: #193441;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    
+        img {
+            width: 100%;
+            border-radius: 5px;
+            max-height: 500px;
+            min-width: 60vw;
+            object-fit: cover;
+        }
+    
+        .content-top {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    
+        .content-bottom {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+    }
+
+        .tournament-details-submissions {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 25px;
+            width: 100%;
+            background-color:#193441;
+            border-radius: 5px;
+            align-items: center;
+            text-align: center;
+            padding: 15px;
+
+            h2 {
+                color: white;
+            }
+
+            Button {
+                margin-top: 15px;
+            }
+        }
+}
+
+
