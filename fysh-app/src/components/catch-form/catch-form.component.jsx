@@ -4,7 +4,7 @@ import {toast} from 'react-hot-toast';
 import { storage, updateDocInCollection } from '../../utils/firebase/firebase.utils';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
-import { Box, Button } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 
 const defaultFormFields = {
     img: '',
@@ -103,7 +103,7 @@ const CatchForm = (props) => {
                 toast.error(error);
             }
         } else {
-            toast.error("You must be logged in to create a tournament!")
+            toast.error("You must be logged in to submit a catch!")
         }
 
     };
@@ -113,7 +113,7 @@ const CatchForm = (props) => {
             <Button
                 variant="contained"
                 component="label"
-                sx={{width: 150, alignSelf: 'left', backgroundColor: '#91AA9D', color: '#FCFFF5', mr: 2, mb: 2, '&:hover': {backgroundColor: '#576a60'}}}
+                sx={{width: 150, backgroundColor: '#91AA9D', color: '#FCFFF5', mr: 2, mb: 2, '&:hover': {backgroundColor: '#576a60'}}}
             >
                 Add an image
                 <input
@@ -125,11 +125,13 @@ const CatchForm = (props) => {
                 />
             </Button>
             {selectedImage &&
-                <img width='300px' src={previewImage} alt='Uploaded image' />
+                <img width='300px' src={previewImage} alt='Catch submission' />
             }
             {selectedImage && (percent < 100) &&
-                <Button variant='contained' sx={{width: 150, alignSelf: 'left', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} onClick={handleUpload}>Upload file</Button>
+                <Button variant='contained' sx={{width: 150, backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, mt: 2 , '&:hover': {backgroundColor: '#576a60'}}} onClick={handleUpload}>Upload file</Button>
             }
+            <TextField sx={{mb: 2, label: {color: '#FCFFF5'}, input: {color: '#FCFFF5'}}} type='number' min='0' required variant='outlined' label='Size (inches)' onChange={handleChange} name='size' value={Math.abs(size)}></TextField>
+            <TextField sx={{mb: 2, label: {color: '#FCFFF5'}, input: {color: '#FCFFF5'}}} type='text' required variant='outlined' label='Description' onChange={handleChange} name='description' value={description}></TextField>
             <Button sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} variant='contained' type='submit'>Submit</Button>
         </form>
     )
