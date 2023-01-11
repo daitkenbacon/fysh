@@ -1,24 +1,25 @@
 import { useState, useEffect } from 'react';
 import {toast} from 'react-hot-toast';
 
-import { storage, updateDocInCollection } from '../../utils/firebase/firebase.utils';
+import { storage, updateDocInCollection, createDocInCollection } from '../../utils/firebase/firebase.utils';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 import { Box, Button, TextField } from '@mui/material';
 
-const defaultFormFields = {
-    img: '',
-    size: 0,
-    description: '',
-    time_submitted: new Date(),
-    author: '',
-};
-
 const CatchForm = (props) => {
 
     const { userID, tournament } = props;
+
+    const defaultFormFields = {
+        img: '',
+        size: 0,
+        description: '',
+        time_submitted: new Date(),
+        author: userID,
+    };
     
     const [formFields, setFormFields] = useState(defaultFormFields);
+    const [catchID, setCatchID] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewImage, setPreviewImage] = useState('');
     const [percent, setPercent] = useState(0);
@@ -97,7 +98,11 @@ const CatchForm = (props) => {
         if(userID){
             try {
                 setFormFields({...formFields, author: userID});
-                updateDocInCollection('tournaments', tournament.id, {catches: [...tournament.catches, formFields] });
+                await createDocInCollection(formFields, 'catches').then(item => {
+                    updateDocInCollection('tournaments', tournament.id, {catches: [...tournament.catches, item.data().id] })
+                })
+                console.log('Catch ID: ', catchID);
+                
                 resetFormFields();
             } catch(error) {
                 toast.error(error);

@@ -9,6 +9,7 @@ import { Modal, Button, Box } from "@mui/material";
 
 import { toast, Toaster } from 'react-hot-toast';
 import CatchForm from "../../components/catch-form/catch-form.component";
+import CatchCard from '../../components/catch-card/catch-card.component';
 
 const modalStyle = {
     position: 'absolute',
@@ -39,7 +40,7 @@ const TournamentDetails = () => {
     }
     const handleClose = () => setOpenModal(false);
 
-    const { name, description, image, rules, participants, max_participants, registration_fee } = tournament;
+    const { name, description, image, rules, participants, max_participants, registration_fee, catches } = tournament;
 
     useEffect(() => {
         async function getTournament() {
@@ -91,6 +92,15 @@ const TournamentDetails = () => {
             <div className="tournament-details-submissions">
                 <h2>Submissions</h2>
                 <Button onClick={handleOpen} variant='contained'>Add a Catch</Button>
+                <div className="submissions-container">
+                    {catches &&
+                        catches.map((submission) => {
+                            return (
+                                <CatchCard key={submission} submission={submission}/>
+                            )
+                        })
+                    }
+                </div>
             </div>
             <Modal
                 open={openModal}

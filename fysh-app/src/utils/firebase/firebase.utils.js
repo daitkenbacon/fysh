@@ -113,13 +113,17 @@ export const onAuthStateChangedListener = (callback) =>
   onAuthStateChanged(auth, callback);
 
 export const createDocInCollection = async (objectToAdd, collectionToPut) => {
-  const col = collection(db, collectionToPut);
-  const docRef = await addDoc(col, objectToAdd);
-
-  //logs the doc ID as an object field
-  const res = await updateDoc(docRef,{id: docRef.id})
-
-  return res;
+  try {
+    const col = collection(db, collectionToPut);
+    const docRef = await addDoc(col, objectToAdd);
+  
+    //logs the doc ID as an object field
+    await updateDoc(docRef,{id: docRef.id})
+    const res = getDocInCollection(collectionToPut, docRef.id);
+    return res;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 export const updateDocInCollection = async (collectionName, docId, data) => {
@@ -159,6 +163,6 @@ export const getDocInCollection = async (collectionToGetFrom, docId) => {
     }
     return docSnap;
   } catch(error) {
-    console.log(error);
+    console.log('getDocInCollection error: ', docId, error);
   }
 }
