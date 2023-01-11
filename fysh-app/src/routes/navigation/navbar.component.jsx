@@ -30,7 +30,7 @@ const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, currentUserName } = useContext(UserContext);
 
   const signOutHandler = async () => {
     handleCloseUserMenu();
@@ -162,7 +162,7 @@ const Navbar = () => {
                 </Button>
               ))}
             </Box>
-            {currentUser && <Typography sx={{marginRight: 1}} >{currentUser.displayName ? currentUser.displayName : currentUser.email}</Typography>}
+            {currentUserName && <Typography sx={{marginRight: 1}} >{currentUserName ? currentUserName : currentUser.email}</Typography>}
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

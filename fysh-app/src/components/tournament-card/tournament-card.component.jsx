@@ -46,12 +46,12 @@ const TournamentCard = ({tournament}) => {
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
 
   useEffect(() => {
-          async function getUsername() {
+          async function getUserData() {
               const user = await getDocInCollection('users', author);
               setUserName(user.data().displayName);
           }
 
-          getUsername();
+          getUserData();
       }, [])
 
   const delay = (millisec) => {
@@ -138,12 +138,13 @@ const TournamentCard = ({tournament}) => {
       <CardActions className='card-buttons'>
         <Button onClick={() => navigate(`/tournament/${tournament.id}`, tournament.id)} sx={{color: '#FCFFF5'}} size="small">Details</Button>
                 <Button 
-        disabled={!(participants && participants.length < max_participants)} onClick={() => handleRegister()} 
+        disabled={(!(participants && participants.length < max_participants) || participants.includes(currentUserUID))} onClick={() => handleRegister()} 
         sx={{backgroundColor: '#3E606F'}} 
         variant='contained' 
         size="small"
         >
-            ${registration_fee} Register
+            {participants &&
+            participants.includes(currentUserUID) ? 'Registered' : `$${registration_fee} Register`}
         </Button>
       </CardActions>
     </Card>
