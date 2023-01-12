@@ -23,7 +23,7 @@ const CatchCard = ({submission}) => {
                 const item = await getDocInCollection('catches', submission)
                 setCatchItem(item.data());
                 setCatchDate(new Date(item.data().time_submitted.seconds * 1000).toLocaleDateString('en-US'));
-                setCatchTime(new Date(item.data().time_submitted.seconds * 1000).toLocaleDateString('en-US'));
+                setCatchTime(new Date(item.data().time_submitted.seconds * 1000).toLocaleTimeString('en-US'));
             } catch (err) {
                 console.log(err);
             }
@@ -48,15 +48,15 @@ const CatchCard = ({submission}) => {
 
     return (
         <div className="catch-card-container">
-            <div>
-                {userName}
-                {catchDate}
+            <div className='card-header'>
+                <h4>{userName}'s Catch</h4>
+                <p>Caught on {catchDate} at {catchTime}</p>
             </div>
             <div>
-                {catchItem.description}
-                {catchItem.size}
+                <p>{catchItem.description}</p>
+                <p>Size: {catchItem.size} inches</p>
             </div>
-            <img width={250} src={catchItem.img}/>
+            <img className='card-img' src={catchItem.img}/>
         </div>
     )
 }

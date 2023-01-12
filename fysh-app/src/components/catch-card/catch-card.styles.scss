@@ -1,0 +1,35 @@
+.catch-card-container {
+    width: 300px;
+    background-color: beige;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
+    min-height: 300px;
+
+    p {
+        color: #193441;
+        font-size: 1em;
+        font-weight: bold;
+    }
+
+    .card-header {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+
+        h4 {
+            color: #193441;
+            font-size: 1.5em;
+        }
+    }
+
+    .card-img {
+        width: 100%;
+        max-height: 500px;
+        border-radius: 5px;
+        object-fit: contain;
+        bottom: 0;
+    }
+}

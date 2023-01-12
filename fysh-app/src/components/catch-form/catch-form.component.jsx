@@ -23,6 +23,7 @@ const CatchForm = (props) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewImage, setPreviewImage] = useState('');
     const [percent, setPercent] = useState(0);
+    const [isImageUploaded, setIsImageUploaded] = useState(false);
     
     const { img, size, description, time_submitted } = formFields;
 
@@ -64,6 +65,7 @@ const CatchForm = (props) => {
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     setFormFields({ ...formFields, img: url});
+                    setIsImageUploaded(true);
                 })
             }
         )
@@ -92,6 +94,11 @@ const CatchForm = (props) => {
 
         if(percent > 0 && percent < 100) {
             toast.error('Wait for image to upload before submitting.')
+            return;
+        }
+
+        if(!isImageUploaded){
+            toast.error('You must upload your image before submitting.');
             return;
         }
 
@@ -136,7 +143,7 @@ const CatchForm = (props) => {
                 <Button variant='contained' sx={{width: 150, backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, mt: 2 , '&:hover': {backgroundColor: '#576a60'}}} onClick={handleUpload}>Upload file</Button>
             }
             <TextField sx={{mb: 2, label: {color: '#FCFFF5'}, input: {color: '#FCFFF5'}}} type='number' min='0' required variant='outlined' label='Size (inches)' onChange={handleChange} name='size' value={Math.abs(size)}></TextField>
-            <TextField sx={{mb: 2, label: {color: '#FCFFF5'}, input: {color: '#FCFFF5'}}} type='text' required variant='outlined' label='Description' onChange={handleChange} name='description' value={description}></TextField>
+            <TextField sx={{mb: 2, label: {color: '#FCFFF5'}, input: {color: '#FCFFF5'}}} type='text' required variant='outlined' label='Description' onChange={handleChange} name='description' value={description} inputProps={{ maxLength: 50 }}></TextField>
             <Button sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} variant='contained' type='submit'>Submit</Button>
         </form>
     )

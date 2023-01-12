@@ -90,8 +90,8 @@ const TournamentDetails = () => {
                 </div>
             </div>
             <div className="tournament-details-submissions">
-                <h2>Submissions</h2>
-                <Button onClick={handleOpen} variant='contained'>Add a Catch</Button>
+                <h2>{`${catches ? catches.length : 'No'} Submissions`}</h2>
+                <Button onClick={handleOpen} variant='contained'>Submit a Catch</Button>
                 <div className="submissions-container">
                     {catches &&
                         catches.map((submission) => {
@@ -105,7 +105,7 @@ const TournamentDetails = () => {
             <Modal
                 open={openModal}
                 onClose={handleClose}
-                aria-labelledby="Add a Catch"
+                aria-labelledby="Submit a Catch"
                 aria-describedby="Upload a catch to submit to the tournament."
             >
                 <Box sx={modalStyle}>
