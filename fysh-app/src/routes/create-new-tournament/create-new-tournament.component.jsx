@@ -30,7 +30,8 @@ const defaultFormFields = {
         start_date: new Date(),
         end_date: new Date(),
         image: '',
-        author: ''
+        author: '',
+        catches: [],
     }
 
 const TournamentForm = () => {
@@ -41,7 +42,7 @@ const TournamentForm = () => {
     const [previewImage, setPreviewImage] = useState('');
     const [percent, setPercent] = useState(0);
     const navigate = useNavigate();
-    const { name, description, rules, registration_fee, max_participants, start_date, end_date, image } = formFields;
+    const { name, description, rules, registration_fee, max_participants } = formFields;
 
     function Router(props) {
         const { children } = props;

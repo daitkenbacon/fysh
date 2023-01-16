@@ -19,13 +19,12 @@ const CatchForm = (props) => {
     };
     
     const [formFields, setFormFields] = useState(defaultFormFields);
-    const [catchID, setCatchID] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewImage, setPreviewImage] = useState('');
     const [percent, setPercent] = useState(0);
     const [isImageUploaded, setIsImageUploaded] = useState(false);
     
-    const { img, size, description, time_submitted } = formFields;
+    const { size, description, } = formFields;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
