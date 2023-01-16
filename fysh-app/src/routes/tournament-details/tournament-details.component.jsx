@@ -28,8 +28,11 @@ const TournamentDetails = () => {
     const { id } = useParams();
     const [tournament, setTournament] = useState([]);
     const [startDate, setStartDate] = useState('');
+    const [winnerCatch, setWinnerCatch] = useState('');
+    const [isTournamentOpen, setIsTournamentOpen] = useState(false);
     const [endDate, setEndDate] = useState('');
     const [openModal, setOpenModal] = useState(false);
+    const [isHost, setisHost] = useState(false);
     const handleOpen = () => {
         if(!participants.includes(currentUserUID)){
             toast.error('You are not registered for this tournament!')
@@ -40,7 +43,7 @@ const TournamentDetails = () => {
     }
     const handleClose = () => setOpenModal(false);
 
-    const { name, description, image, rules, participants, max_participants, registration_fee, catches } = tournament;
+    const { name, description, image, rules, participants, max_participants, registration_fee, catches, winner, isOpen } = tournament;
 
     useEffect(() => {
         async function getTournament() {
@@ -49,14 +52,25 @@ const TournamentDetails = () => {
                 setTournament(t.data());
                 setStartDate(new Date(t.data().start_date.seconds * 1000).toLocaleDateString('en-US'));
                 setEndDate(new Date(t.data().end_date.seconds * 1000).toLocaleDateString('en-US'));
+                setisHost(t.data().author==currentUserUID);
+                setIsTournamentOpen(isOpen);
+                setWinnerCatch(winner);
             } catch(error) {
                 console.log(error);
             }
         }
         getTournament();
-    }, [])
+    }, [currentUserUID, winnerCatch])
 
-    
+    const declareWinner = async (submissionId) => {
+        try {
+            updateDocInCollection('tournaments', id, {...tournament, winner: submissionId, isOpen: false});
+            setIsTournamentOpen(false);
+            setWinnerCatch(submissionId);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
     return(tournament &&
         <div className="tournament-details-container">
@@ -90,13 +104,23 @@ const TournamentDetails = () => {
                 </div>
             </div>
             <div className="tournament-details-submissions">
-                <h2>{`${catches ? catches.length : 'No'} Submissions`}</h2>
-                <Button onClick={handleOpen} variant='contained'>Submit a Catch</Button>
+                <div className="winning-submission">
+                    {winnerCatch &&
+                    <div>
+                        <h2>Winning Catch:</h2>
+                        <CatchCard submission={winnerCatch}/>
+                    </div>
+                    }
+                </div>
+                <h2>{`${catches ? catches.length : 'No'} Submissions${isTournamentOpen ? '' : ' (CLOSED)'}`}</h2>
+                {isTournamentOpen &&
+                    <Button onClick={handleOpen} variant='contained'>Submit a Catch</Button>
+                }
                 <div className="submissions-container">
                     {catches &&
                         catches.map((submission) => {
                             return (
-                                <CatchCard key={submission} submission={submission}/>
+                                <CatchCard isOpen={isTournamentOpen} declareWinner={declareWinner} isHost={isHost} key={submission} submission={submission}/>
                             )
                         })
                     }
@@ -109,7 +133,7 @@ const TournamentDetails = () => {
                 aria-describedby="Upload a catch to submit to the tournament."
             >
                 <Box sx={modalStyle}>
-                    <CatchForm userID={currentUserUID} tournament={tournament}/>
+                    <CatchForm setOpenModal={setOpenModal} userID={currentUserUID} tournament={tournament}/>
                 </Box>
             </Modal>
         </div>

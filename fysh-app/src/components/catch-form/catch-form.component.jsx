@@ -8,7 +8,7 @@ import { Box, Button, TextField } from '@mui/material';
 
 const CatchForm = (props) => {
 
-    const { userID, tournament } = props;
+    const { userID, tournament, setOpenModal } = props;
 
     const defaultFormFields = {
         img: '',
@@ -108,9 +108,8 @@ const CatchForm = (props) => {
                 await createDocInCollection(formFields, 'catches').then(item => {
                     updateDocInCollection('tournaments', tournament.id, {catches: [...tournament.catches, item.data().id] })
                 })
-                console.log('Catch ID: ', catchID);
-                
                 resetFormFields();
+                setOpenModal(false);
             } catch(error) {
                 toast.error(error);
             }
