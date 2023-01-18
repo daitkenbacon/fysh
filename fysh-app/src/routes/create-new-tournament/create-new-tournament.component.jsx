@@ -20,7 +20,13 @@ import { UserContext } from '../../contexts/user.context';
 import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 
-const defaultFormFields = {
+
+
+const TournamentForm = () => {
+
+    const { currentUser, currentUserUID } = useContext(UserContext);
+
+    const defaultFormFields = {
         name: '', 
         description: '',
         rules: '',
@@ -30,13 +36,11 @@ const defaultFormFields = {
         start_date: new Date(),
         end_date: new Date(),
         image: '',
-        author: '',
+        author: currentUserUID,
         catches: [],
+        isOpen: true,
     }
 
-const TournamentForm = () => {
-
-    const { currentUser, currentUserUID } = useContext(UserContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const [selectedImage, setSelectedImage] = useState('');
     const [previewImage, setPreviewImage] = useState('');
@@ -81,9 +85,9 @@ const TournamentForm = () => {
 
         if(currentUserUID){
             try {
-                setFormFields({...formFields, author: currentUser.uid});
+                setFormFields({...formFields, author: currentUserUID});
                 const res = await createDocInCollection(formFields, 'tournaments');
-                // resetFormFields();
+                resetFormFields();
                 navigate('/tournaments');
             } catch(error) {
                 toast.error(error);

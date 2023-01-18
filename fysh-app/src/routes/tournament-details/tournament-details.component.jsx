@@ -4,12 +4,13 @@ import { useParams } from "react-router-dom"
 import './tournament-details.styles.scss';
 import { UserContext } from '../../contexts/user.context';
 
-import { getDocInCollection, updateDocInCollection } from "../../utils/firebase/firebase.utils";
+import { getDocInCollection, updateDocInCollection, deleteDocInCollection } from "../../utils/firebase/firebase.utils";
 import { Modal, Button, Box } from "@mui/material";
 
 import { toast, Toaster } from 'react-hot-toast';
 import CatchForm from "../../components/catch-form/catch-form.component";
 import CatchCard from '../../components/catch-card/catch-card.component';
+import { deleteField } from "firebase/firestore";
 
 const modalStyle = {
     position: 'absolute',
@@ -33,6 +34,7 @@ const TournamentDetails = () => {
     const [endDate, setEndDate] = useState('');
     const [openModal, setOpenModal] = useState(false);
     const [isHost, setisHost] = useState(false);
+    const [trigger, setTrigger] = useState(false);
     const handleOpen = () => {
         if(!participants.includes(currentUserUID)){
             toast.error('You are not registered for this tournament!')
@@ -56,11 +58,11 @@ const TournamentDetails = () => {
                 setIsTournamentOpen(isOpen);
                 setWinnerCatch(winner);
             } catch(error) {
-                console.log(error);
+                console.error(error);
             }
         }
         getTournament();
-    }, [currentUserUID, winnerCatch])
+    }, [currentUserUID, winnerCatch, trigger])
 
     const declareWinner = async (submissionId) => {
         try {
@@ -69,6 +71,21 @@ const TournamentDetails = () => {
             setWinnerCatch(submissionId);
         } catch (err) {
             console.error(err);
+        }
+    }
+
+    const deleteSubmission = async (submissionId) => {
+        if(catches) {
+            try {
+                let newCatches = catches.filter((item) => item !== submissionId);
+                updateDocInCollection('tournaments', id, {catches: deleteField()});
+                updateDocInCollection('tournaments', id, {catches: newCatches});
+                deleteDocInCollection(submissionId, 'catches');
+                setTrigger(!trigger);
+                toast('You have successfully deleted your catch.')
+            } catch (err) {
+                console.error(err);
+            }
         }
     }
 
@@ -120,7 +137,7 @@ const TournamentDetails = () => {
                     {catches &&
                         catches.map((submission) => {
                             return (
-                                <CatchCard isOpen={isTournamentOpen} declareWinner={declareWinner} isHost={isHost} key={submission} submission={submission}/>
+                                <CatchCard userID={currentUserUID} isOpen={isTournamentOpen} declareWinner={declareWinner} removeSubmission={deleteSubmission} isHost={isHost} key={submission} submission={submission}/>
                             )
                         })
                     }

@@ -25,11 +25,41 @@
         }
     }
 
-    .card-img {
-        width: 100%;
-        max-height: 500px;
-        border-radius: 5px;
-        object-fit: contain;
-        bottom: 0;
+    .declare-winner-button {
+        position: relative;
     }
+
+    .img-container {
+        position: relative;
+        text-align: center;
+        .card-img {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 5px;
+            object-fit: cover;
+            bottom: 0;
+            margin: 0;
+        }
+
+        .delete-catch-button {
+            width: 25px;
+            height: 25px;
+            margin: 0;
+            position: absolute;
+            bottom: 8px;
+            right: 15px;
+            color:antiquewhite;
+            background-color: #193441;
+
+            &:hover {
+                background-color: antiquewhite;
+                color:#193441;
+            }
+            &:active {
+                background-color: rgb(190, 179, 164);
+            }
+        }
+    }
+
 }
+

@@ -21,6 +21,7 @@ import {
   getDocs,
   addDoc,
   updateDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
@@ -126,11 +127,20 @@ export const createDocInCollection = async (objectToAdd, collectionToPut) => {
   }
 }
 
+export const deleteDocInCollection = async (docId, collectionName) => {
+  try {
+    const docRef = doc(db, collectionName, docId);
+    const res = await deleteDoc(docRef);
+    return res;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 export const updateDocInCollection = async (collectionName, docId, data) => {
   try {
     const docRef = doc(db, collectionName, docId);
     const res = await updateDoc(docRef,data);
-    console.log('Updating ', docRef, ' with ', data)
     return res;
   } catch (err) {
     console.error(err);
