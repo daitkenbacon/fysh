@@ -72,7 +72,7 @@ const CatchCard = (props) => {
             </div>
             <div className='img-container'>
                 <img className='card-img' src={catchItem.img}></img>
-                {isCatchOwner &&
+                {isCatchOwner && isOpen &&
                     <button onClick={() => removeSubmission(submission)} className='delete-catch-button'>
                         X
                     </button>
