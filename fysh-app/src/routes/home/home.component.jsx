@@ -23,8 +23,6 @@ const Home = () => {
                 </h4>
             </div>
         </div>
-         <Typography>Created with React & Firebase</Typography>
-            <Outlet />
         </Box>
     )
 }
