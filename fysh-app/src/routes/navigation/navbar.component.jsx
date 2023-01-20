@@ -266,7 +266,7 @@ const [navigation, setNavigation] = useState([
                   </div>
                 </div>
               </div>
-              <p className='text-white flex cursor-default'>
+              <p className='hidden sm:ml-6 sm:block text-white cursor-default'>
                 {currentUserName}
               </p>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
