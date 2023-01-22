@@ -133,5 +133,10 @@ module.exports = {
       'FrancoisOne' : ['Francois One', 'sans-serif'],
     },
   },
-  plugins: [],
+  corePlugins: {
+    aspectRatio: false,
+  },
+  plugins: [
+    require('@tailwindcss/aspect-ratio'),
+  ],
 }
