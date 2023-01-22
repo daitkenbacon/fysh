@@ -1,10 +1,5 @@
-import { Typography, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
-
-import { PrimaryTheme } from "../../components/primary-theme/primary-theme";
-import { ThemeProvider } from '@mui/material';
-
-import './home.styles.css';
 
 
 const Home = () => {

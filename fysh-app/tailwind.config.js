@@ -5,6 +5,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        'grow-110': {
+          '0%': { transform: 'scale(1)' },
+          '100%': { transform: 'scale(1.1)' },
+        },
+      },
+      animation: {
+        'grow': 'grow-110 0.5s ease-in-out'
+      },
       colors: {
         gray: {
           '50':  '#f9fafb',

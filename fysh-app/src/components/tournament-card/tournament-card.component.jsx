@@ -4,25 +4,13 @@ import { useEffect, useState, useContext } from 'react';
 import { getDocInCollection, updateDocInCollection } from '../../utils/firebase/firebase.utils';
 
 import './tournament-card.styles.css'
+import { UserGroupIcon } from '@heroicons/react/24/solid';
 
 import { UserContext } from '../../contexts/user.context';
 
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import GroupsIcon from '@mui/icons-material/Groups';
-
 import { toast, Toaster } from 'react-hot-toast';
 
-import PropTypes from 'prop-types';
 import { Link, Link as RouterLink, MemoryRouter } from 'react-router-dom';
-import { StaticRouter } from 'react-router-dom/server';
 import { useNavigate } from 'react-router-dom';
 
 const TournamentCard = ({tournament}) => {
@@ -41,7 +29,9 @@ const TournamentCard = ({tournament}) => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('Fysher');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [canRegister, setCanRegister] = useState(true);
   const { currentUserUID, currentUser } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
 
@@ -49,10 +39,13 @@ const TournamentCard = ({tournament}) => {
           async function getUserData() {
               const user = await getDocInCollection('users', author);
               setUserName(user.data().displayName);
+              setCanRegister((participants && participants.length < max_participants) || !participants.includes(currentUserUID));
           }
           if(author) {
+            setIsLoading(true);
             getUserData();
           }
+          setIsLoading(false);
       }, [])
 
   const delay = (millisec) => {
@@ -69,8 +62,8 @@ const TournamentCard = ({tournament}) => {
       return;
     }
     try {
-      const tournDoc = await getDocInCollection('tournaments', id);
-      const participantsQuery = tournDoc.data().participants;
+      const tournamentDoc = await getDocInCollection('tournaments', id);
+      const participantsQuery = tournamentDoc.data().participants;
         if(participantsQuery.length >= max_participants){
           toast.error('Tournament is full.');
           setIsRegistering(false);
@@ -95,28 +88,46 @@ const TournamentCard = ({tournament}) => {
   }
 
   return (
-    <div key={id} className="group relative">
-      <div className="min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:aspect-none lg:h-80">
+    <div key={id} 
+    className={`group relative duration-200 transform transition-opacity ${isLoading ? 'opacity-0' : 'opacity-100'} ease-out`}
+     >
+      <div className="relative group min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-50 transition-opacity lg:aspect-none lg:h-80">
         <img
           src={image}
           alt={name}
-          className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+          className="h-full w-full object-cover object-center lg:h-full lg:w-full group-hover:scale-110 transition-transform"
         />
       </div>
+      <h1 className='hidden gap-4 flex-col group-hover:flex absolute font-bold top-1/4 left-1/2 -translate-x-1/2 text-center'>
+          <button className='bg-white p-1 rounded-md'>
+            <Link to={`/tournament/${id}`}>
+              Details
+            </Link>
+          </button>
+          <button 
+            disabled={!canRegister} 
+            onClick={() => handleRegister()} 
+            className={`${canRegister ? 'bg-white' : 'bg-gray-600'} p-1 rounded-md`}>
+              {participants &&
+                participants.includes(currentUserUID) ? 'Registered' : `$${registration_fee} Register`
+              }
+          </button>
+        </h1>
       <div className="mt-4 flex justify-between">
         <div>
           <h3 className="text-sm text-gray-700">
             <Link to={`/tournament/${id}`}>
-              <span aria-hidden="true" className="absolute inset-0" />
               {name}
             </Link>
           </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {description.substring(0, 80)}
-            {description.length > 100 && '...'}
-    </p>
         </div>
-        <p className="text-sm font-medium text-gray-900">{registration_fee}</p>
+        <div className='flex gap-2 flex-row'>
+          <UserGroupIcon className='h-5 w-5' aria-hidden='true'/>
+          <p className="text-sm font-medium text-gray-900">
+            {participants ? participants.length : '0'}/{max_participants}
+          </p>
+        </div>
+        <p className="text-sm font-medium text-gray-900">${registration_fee}</p>
       </div>
     </div>
   );
