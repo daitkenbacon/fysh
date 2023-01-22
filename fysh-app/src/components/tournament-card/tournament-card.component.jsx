@@ -50,8 +50,9 @@ const TournamentCard = ({tournament}) => {
               const user = await getDocInCollection('users', author);
               setUserName(user.data().displayName);
           }
-
-          getUserData();
+          if(author) {
+            getUserData();
+          }
       }, [])
 
   const delay = (millisec) => {
