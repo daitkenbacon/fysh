@@ -10,7 +10,7 @@ import { StaticRouter } from 'react-router-dom/server';
 
 import { createDocInCollection } from "../../utils/firebase/firebase.utils";
 import { storage } from '../../utils/firebase/firebase.utils';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL, updateMetadata } from 'firebase/storage';
 
 import './tournament-form.styles.css';
 
@@ -107,6 +107,18 @@ const TournamentForm = () => {
 
         const storageRef = ref(storage, `/tournaments/${selectedImage.name}`);
         const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+
+        const newMetadata = {
+            cacheControl: 'public,max-age=300',
+            contentType: 'image/jpeg'
+        };
+        
+        updateMetadata(storageRef, newMetadata)
+            .then((metadata) => {
+                // Updated metadata for 'images/forest.jpg' is returned in the Promise
+            }).catch((error) => {
+                console.error(error);
+            });
 
         uploadTask.on(
             "state_changed",
