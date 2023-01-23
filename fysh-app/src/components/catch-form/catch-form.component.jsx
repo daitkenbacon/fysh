@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {toast} from 'react-hot-toast';
 
 import { storage, updateDocInCollection, createDocInCollection } from '../../utils/firebase/firebase.utils';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL, updateMetadata } from 'firebase/storage';
 
 import { Box, Button, TextField } from '@mui/material';
 
@@ -50,6 +50,17 @@ const CatchForm = (props) => {
 
         const storageRef = ref(storage, `/catches/${selectedImage.name}`);
         const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+        const newMetadata = {
+            cacheControl: 'public,max-age=300',
+            contentType: 'image/jpeg'
+        };
+
+        updateMetadata(storageRef, newMetadata)
+            .then((metadata) => {
+                // Updated metadata for 'images/forest.jpg' is returned in the Promise
+            }).catch((error) => {
+                console.error(error);
+            });
 
         uploadTask.on(
             "state_changed",
