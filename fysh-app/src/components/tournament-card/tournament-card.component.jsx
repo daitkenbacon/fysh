@@ -89,17 +89,17 @@ const TournamentCard = ({tournament}) => {
 
   return (
     <div key={id} 
-    className={`group relative duration-200 transform transition-opacity ${isLoading ? 'opacity-0' : 'opacity-100'} ease-out`}
+    className={`group rounded-md relative duration-200 transform transition-opacity ${isLoading ? 'opacity-0' : 'opacity-100'} ease-out`}
      >
-      <div className="relative group min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-50 transition-opacity lg:aspect-none lg:h-80">
+      <div className="relative group min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 transition-opacity lg:aspect-none lg:h-80">
         <img
           src={image}
           alt={name}
           className="h-full w-full object-cover object-center lg:h-full lg:w-full group-hover:scale-110 transition-transform"
         />
       </div>
-      <h1 className='hidden gap-4 flex-col group-hover:flex absolute font-bold top-1/4 left-1/2 -translate-x-1/2 text-center'>
-          <button className='bg-white p-1 rounded-md'>
+      <div className='hidden gap-4 flex-col group-hover:flex absolute font-bold top-1/4 left-1/2 -translate-x-1/2 text-center'>
+          <button className='bg-white text-xl p-1 rounded-md shadow hover:bg-gray-300 transition-colors hover:shadow-md'>
             <Link to={`/tournament/${id}`}>
               Details
             </Link>
@@ -107,12 +107,12 @@ const TournamentCard = ({tournament}) => {
           <button 
             disabled={!canRegister} 
             onClick={() => handleRegister()} 
-            className={`${canRegister ? 'bg-white' : 'bg-gray-600'} p-1 rounded-md`}>
+            className={`${canRegister ? 'bg-white hover:bg-gray-300 hover:shadow-md transition-colors' : 'bg-gray-600'} p-1 text-xl rounded-md shadow`}>
               {participants &&
                 participants.includes(currentUserUID) ? 'Registered' : `$${registration_fee} Register`
               }
           </button>
-        </h1>
+        </div>
       <div className="mt-4 flex justify-between">
         <div>
           <h3 className="text-sm text-gray-700">

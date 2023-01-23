@@ -22,7 +22,6 @@ const TournamentList = () => {
             setTournaments(t);
             setFilteredTournaments(t);
             setIsLoading(false);
-            console.log('getTournamentData');
         }
 
         getTournaments();
@@ -73,8 +72,8 @@ const TournamentList = () => {
                         type="text"
                         name="filter"
                         id="filter"
-                        className="block w-full rounded-md border-gray-300 pl-4 pr-2 focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
-                        placeholder="Search tournaments..."
+                        className="placeholder:text-clip placeholder:truncate block w-full rounded-md border-gray-300 pl-4 pr-2 focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
+                        placeholder="Search tournaments"
                     />
                 </div>
             </div>
