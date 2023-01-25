@@ -62,6 +62,18 @@ const CatchForm = (props) => {
                 console.error(error);
             });
 
+        const newMetadata = {
+            cacheControl: 'public,max-age=300',
+            contentType: 'image/jpeg'
+        };
+        
+        updateMetadata(storageRef, newMetadata)
+            .then((metadata) => {
+                // Updated metadata for 'images/forest.jpg' is returned in the Promise
+            }).catch((error) => {
+                console.error(error);
+            });
+
         uploadTask.on(
             "state_changed",
             (snapshot) => {

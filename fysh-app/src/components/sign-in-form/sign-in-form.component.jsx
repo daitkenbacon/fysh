@@ -44,8 +44,9 @@ const SignInForm = () => {
 
         try {
             const res = await signInAuthUserWithEmailAndPassword(email, password);
+            console.log('signInAuthUser:', res);
             resetFormFields();
-            navigate('/tournaments')
+            navigate('/tournaments');
         } catch(error) {
             switch(error.code) {
                 case 'auth/wrong-password':

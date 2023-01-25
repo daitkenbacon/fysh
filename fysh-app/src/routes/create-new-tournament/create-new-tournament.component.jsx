@@ -138,24 +138,6 @@ const TournamentForm = () => {
                 setIsUploading(false);
             })
         }).catch((err) => console.log(err));
-
-        // .then(url => 
-        //     getDownloadURL(storageRef).then(downloadUrl => {
-        //         setFormFields({ ...formFields, image: downloadUrl});
-        //     })
-        // );
-
-        // const storageRef = ref(storage, `/tournaments/${selectedImage.name}`).then((res) => {
-        //     updateMetadata(storageRef, newMetadata)
-        //         .then((metadata) => {
-        //             console.log(metadata);
-        //         }).catch((error) => {
-        //             console.error(error);
-        //         });
-        // });
-
-        // const uploadTask = uploadBytesResumable(storageRef, selectedImage);
-
     }
 
     const handleChange = (event) => {
