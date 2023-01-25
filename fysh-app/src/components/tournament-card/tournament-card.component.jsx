@@ -41,11 +41,9 @@ const TournamentCard = ({tournament}) => {
               setUserName(user.data().displayName);
               setCanRegister((participants && participants.length < max_participants) || !participants.includes(currentUserUID));
           }
-          if(author) {
-            setIsLoading(true);
+          if(author){
             getUserData();
           }
-          setIsLoading(false);
       }, [])
 
   const delay = (millisec) => {

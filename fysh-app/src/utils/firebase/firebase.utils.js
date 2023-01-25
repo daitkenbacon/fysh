@@ -89,7 +89,7 @@ export const createUserDocumentFromAuth = async (
         ...additionalInformation,
       });
     } catch (error) {
-      console.log('error creating the user', error.message);
+      console.error('error creating the user', error.message);
     }
   }
 
@@ -159,7 +159,7 @@ export const getDocsInCollection = async (collectionToGetFrom) => {
     return tournaments;
 
   } catch(error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -168,11 +168,11 @@ export const getDocInCollection = async (collectionToGetFrom, docId) => {
     const docRef = doc(db, collectionToGetFrom, docId);
     const docSnap = await getDoc(docRef);
     if(!docSnap){
-      console.log("No such document exists.")
+      console.error("No such document exists.")
       return;
     }
     return docSnap;
   } catch(error) {
-    console.log('getDocInCollection error: ', docId, error);
+    console.error('getDocInCollection error: ', docId, error);
   }
 }

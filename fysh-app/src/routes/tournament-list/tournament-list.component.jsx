@@ -8,27 +8,19 @@ import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { getDocsInCollection, getDocInCollection } from '../../utils/firebase/firebase.utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { TournamentsContext } from '../../contexts/tournaments.context';
 
 const TournamentList = () => {
 
-    const [tournaments, setTournaments] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        async function getTournaments() {
-            setIsLoading(true);
-            const t = await getDocsInCollection('tournaments');
-            setTournaments(t);
-            setFilteredTournaments(t);
-            setIsLoading(false);
-        }
-
-        getTournaments();
-    }, [1])
+    const { tournaments, isLoading } = useContext(TournamentsContext);
 
     const [search, setSearch] = useState('');
     const [filteredTournaments, setFilteredTournaments] = useState(tournaments);
+
+    useEffect(() => {
+        setFilteredTournaments(tournaments);
+    }, [tournaments])
 
     const filterList = (e) => {
         const keyword = e.target.value;

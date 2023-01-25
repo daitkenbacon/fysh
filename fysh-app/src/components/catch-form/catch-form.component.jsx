@@ -50,6 +50,17 @@ const CatchForm = (props) => {
 
         const storageRef = ref(storage, `/catches/${selectedImage.name}`);
         const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+        const newMetadata = {
+            cacheControl: 'public,max-age=300',
+            contentType: 'image/jpeg'
+        };
+
+        updateMetadata(storageRef, newMetadata)
+            .then((metadata) => {
+                // Updated metadata for 'images/forest.jpg' is returned in the Promise
+            }).catch((error) => {
+                console.error(error);
+            });
 
         const newMetadata = {
             cacheControl: 'public,max-age=300',
@@ -72,7 +83,7 @@ const CatchForm = (props) => {
 
                 setPercent(percent);
             },
-            (err) => {toast.error(err); console.log(err)},
+            (err) => {toast.error(err); console.error(err)},
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     setFormFields({ ...formFields, img: url});

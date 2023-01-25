@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { createContext, useState } from "react";
 
+import { getDocsInCollection } from '../utils/firebase/firebase.utils';
+
 const addTournament = (tournaments, tournamentToAdd) => {
     return (
         [...tournaments, { ...tournamentToAdd, quantity: 1}]
@@ -11,29 +13,29 @@ const clearTournament = (tournaments, tournamentToClear) => {
     return tournaments.filter(tournament => tournament.id !== tournamentToClear.id);
 }
 
-export const TournamentContext = createContext({
-    addTournamentToList: () => {},
-    clearTournamentFromList: () => {},
-    name: "",
-
+export const TournamentsContext = createContext({
+    tournaments: [],
+    isLoading: false,
 })
 
 
 
-export const TournamentProvider = ({children}) => {
+export const TournamentsProvider = ({children}) => {
     const [tournaments, setTournaments] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const value = { tournaments, isLoading }
     
-    const addTournamentToList = (tournamentToAdd) => {
-        setTournaments(addTournament(tournaments, tournamentToAdd));
-    }
-
-    const clearTournamentFromList = (tournamentToRemove) => {
-        setTournaments(clearTournament(tournaments, tournamentToRemove));
-    }
-
-    const value = { addTournamentToList, clearTournamentFromList, tournaments };
+    useEffect(() => {
+        async function getTournaments() {
+            const t = await getDocsInCollection('tournaments');
+            setTournaments(t);
+        }
+        setIsLoading(true);
+        getTournaments();
+        setIsLoading(false);
+    }, [])
 
     return (
-        <TournamentContext.Provider value={value}> {children} </TournamentContext.Provider>
+        <TournamentsContext.Provider value={value}> {children} </TournamentsContext.Provider>
     )
 }
