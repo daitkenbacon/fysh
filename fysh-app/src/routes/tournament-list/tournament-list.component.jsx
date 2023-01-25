@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
+import { Toaster } from 'react-hot-toast';
+
 import { getDocsInCollection, getDocInCollection } from '../../utils/firebase/firebase.utils';
 import { useEffect, useState, useContext } from 'react';
 import { TournamentsContext } from '../../contexts/tournaments.context';
@@ -39,6 +41,7 @@ const TournamentList = () => {
     
     return (
     <div className="bg-white">
+        <Toaster/>
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className='flex justify-between gap-10 flex-row align-center items-center'>
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">Tournaments</h2>

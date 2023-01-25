@@ -41,13 +41,18 @@ const TournamentCard = ({tournament}) => {
           async function getUserData() {
               const user = await getDocInCollection('users', author);
               setUserName(user.data().displayName);
-              setCanRegister((participants && participants.length < max_participants) || !participants.includes(currentUserUID));
+              if(participants.includes(currentUserUID)) {
+                setCanRegister(false);
+              } else if(participants.length >= max_participants) {
+                setCanRegister(false);
+              }
+              
               setIsLoading(false);
             }
           if(author){
             getUserData();
           }
-      }, [])
+      }, [author])
 
   const delay = (millisec) => {
     return new Promise(resolve => {
@@ -108,7 +113,7 @@ const TournamentCard = ({tournament}) => {
           <button 
             disabled={!canRegister} 
             onClick={() => handleRegister()} 
-            className={`${canRegister ? 'bg-white hover:bg-gray-300 hover:shadow-md transition-colors' : 'bg-gray-600'} p-1 text-xl rounded-md shadow`}>
+            className={`${canRegister ? 'bg-green-500 text-white hover:bg-green-600 hover:shadow-md transition-colors' : 'bg-gray-500 text-white'} p-1 text-xl rounded-md shadow`}>
               {participants &&
                 participants.includes(currentUserUID) ? 'Registered' : `$${registration_fee} Register`
               }
