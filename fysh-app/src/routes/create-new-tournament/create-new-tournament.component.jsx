@@ -4,13 +4,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+import Resizer from 'react-image-file-resizer';
+
 import PropTypes from 'prop-types';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { createDocInCollection } from "../../utils/firebase/firebase.utils";
 import { storage } from '../../utils/firebase/firebase.utils';
-import { ref, uploadBytesResumable, getDownloadURL, updateMetadata } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL, updateMetadata, uploadString } from 'firebase/storage';
 
 import './tournament-form.styles.css';
 
@@ -42,11 +44,14 @@ const TournamentForm = () => {
     }
 
     const [formFields, setFormFields] = useState(defaultFormFields);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [selectedImage, setSelectedImage] = useState('');
     const [previewImage, setPreviewImage] = useState('');
+    const [resizedImage, setResizedImage] = useState('');
     const [percent, setPercent] = useState(0);
     const navigate = useNavigate();
-    const { name, description, rules, registration_fee, max_participants } = formFields;
+    const { name, description, rules, registration_fee, max_participants, author } = formFields;
 
     function Router(props) {
         const { children } = props;
@@ -61,10 +66,6 @@ const TournamentForm = () => {
         children: PropTypes.node,
     };
 
-    const resetFormFields = () => {
-        setFormFields(defaultFormFields);
-    };
-
     useEffect(() => {
         if(!selectedImage) {
             setPreviewImage(undefined);
@@ -75,66 +76,85 @@ const TournamentForm = () => {
         setPreviewImage(objectUrl);
     }, [selectedImage])
 
+    useEffect(() => {
+        if(currentUserUID){
+            setFormFields({...formFields, author: currentUserUID});
+        }
+    }, [currentUserUID])
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        if(percent > 0 && percent < 100) {
-            toast.error('Wait for image to upload before submitting.')
+        if(isUploading) {
+            toast.error('Image is still uploading.');
             return;
         }
-
         if(currentUserUID){
-            try {
-                setFormFields({...formFields, author: currentUserUID});
-                const res = await createDocInCollection(formFields, 'tournaments');
-                resetFormFields();
-                navigate('/tournaments');
-            } catch(error) {
-                toast.error(error);
-                
+            try{
+                setIsLoading(true);
+                await createDocInCollection(formFields, 'tournaments');
+                setFormFields(defaultFormFields);
+                setIsLoading(false);
+                console.log('Finished uploading: ', formFields);
+            } catch(err) {
+                console.error(err);
             }
         } else {
             toast.error("You must be logged in to create a tournament!")
+            
         }
 
     };
 
-    const handleUpload = () => {
+    const resizeFile = (file) =>
+        new Promise((resolve) => {
+            Resizer.imageFileResizer(file, 500, 500, 'jpeg', 100, 0, (uri) => {
+            resolve(uri);
+            });
+    });
+
+    const delay = (millisec) => {
+        return new Promise(resolve => {
+        setTimeout(() => { resolve('') }, millisec);
+        })
+    }
+    
+
+    const handleUpload = async () => {
         if (!selectedImage) {
             toast.error('Please choose a file before uploading.');
             return;
         }
 
-        const storageRef = ref(storage, `/tournaments/${selectedImage.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, selectedImage);
         const newMetadata = {
             cacheControl: 'public,max-age=300',
             contentType: 'image/jpeg'
         };
-        
-        updateMetadata(storageRef, newMetadata)
-            .then((metadata) => {
-                // Updated metadata for 'images/forest.jpg' is returned in the Promise
-            }).catch((error) => {
-                console.error(error);
-            });
+        setIsUploading(true);
+        const storageRef = ref(storage, `/tournaments/${selectedImage.name}`);
+        console.log(storageRef);
+        uploadString(storageRef, resizedImage, 'data_url', newMetadata).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then((URL) => {
+                setFormFields({ ...formFields, image: URL})
+                setIsUploading(false);
+            })
+        }).catch((err) => console.log(err));
 
-        uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-                const percent = Math.round(
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                );
+        // .then(url => 
+        //     getDownloadURL(storageRef).then(downloadUrl => {
+        //         setFormFields({ ...formFields, image: downloadUrl});
+        //     })
+        // );
 
-                setPercent(percent);
-            },
-            (err) => {toast.error(err); console.log(err)},
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                    setFormFields({ ...formFields, image: url});
-                })
-            }
-        )
+        // const storageRef = ref(storage, `/tournaments/${selectedImage.name}`).then((res) => {
+        //     updateMetadata(storageRef, newMetadata)
+        //         .then((metadata) => {
+        //             console.log(metadata);
+        //         }).catch((error) => {
+        //             console.error(error);
+        //         });
+        // });
+
+        // const uploadTask = uploadBytesResumable(storageRef, selectedImage);
 
     }
 
@@ -144,16 +164,22 @@ const TournamentForm = () => {
         setFormFields({ ...formFields, [name]: value });
     };
 
-    const handleFileChange = (event) => {
-        const image = event.target.files[0];
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
         if (!event.target.files || event.target.files.length === 0) {
             setSelectedImage(undefined);
             return;
         }
-        if(image.size > (5 * 1024 * 1024)){
+        if(file.size > (5 * 1024 * 1024)){
             toast.error('File must be less than 5MB.')
         } else {
-            setSelectedImage(image);
+            try{
+                const uri = await resizeFile(file);
+                setResizedImage(uri);
+                setSelectedImage(file);
+            } catch(err) {
+                console.error(err);
+            }
         }
     }
 
@@ -220,12 +246,12 @@ const TournamentForm = () => {
                                     hidden
                                 />
                         </Button>
-                        {selectedImage && (percent < 100) &&
-                            <Button variant='contained' sx={{width: 150, alignSelf: 'left', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} onClick={handleUpload}>Upload file</Button>
+                        {selectedImage &&
+                            <Button variant='contained' sx={{width: 150, alignSelf: 'left', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} onClick={handleUpload}>{isUploading ? 'Uploading...' : 'Upload Image'}</Button>
                         }
                         {(percent > 0) && <p>{percent}%</p>}
                     </Box>
-                    <Button sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} variant='contained' type='submit'>Submit</Button>
+                    <Button disabled={isLoading || isUploading} sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} variant='contained' type='submit'>{`${isLoading ? 'Submitting...' : 'Submit'}`}</Button>
                 </form>
             </div>
         </div>

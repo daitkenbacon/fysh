@@ -44,7 +44,7 @@ const SignUpForm = () => {
                 toast('Cannot create user, email already in use');
         } else {
             toast('Could not register user: ', error);
-            console.log(error);
+            console.error(error);
         }
         }
     };

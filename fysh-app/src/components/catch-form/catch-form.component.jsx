@@ -71,7 +71,7 @@ const CatchForm = (props) => {
 
                 setPercent(percent);
             },
-            (err) => {toast.error(err); console.log(err)},
+            (err) => {toast.error(err); console.error(err)},
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     setFormFields({ ...formFields, img: url});
