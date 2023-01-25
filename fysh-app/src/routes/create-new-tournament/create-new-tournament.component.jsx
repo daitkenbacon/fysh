@@ -10,8 +10,7 @@ import PropTypes from 'prop-types';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
-import { createDocInCollection } from "../../utils/firebase/firebase.utils";
-import { storage } from '../../utils/firebase/firebase.utils';
+import { createDocInCollection, storage } from "../../utils/firebase/firebase.utils";
 import { ref, uploadBytesResumable, getDownloadURL, updateMetadata, uploadString } from 'firebase/storage';
 
 import './tournament-form.styles.css';
@@ -100,9 +99,7 @@ const TournamentForm = () => {
             }
         } else {
             toast.error("You must be logged in to create a tournament!")
-            
         }
-
     };
 
     const resizeFile = (file) =>
@@ -111,13 +108,6 @@ const TournamentForm = () => {
             resolve(uri);
             });
     });
-
-    const delay = (millisec) => {
-        return new Promise(resolve => {
-        setTimeout(() => { resolve('') }, millisec);
-        })
-    }
-    
 
     const handleUpload = async () => {
         if (!selectedImage) {
@@ -184,7 +174,7 @@ const TournamentForm = () => {
             <div className='tournament-form-container'>
                 <Toaster/>
                 <form onSubmit={handleSubmit} className="tournament-form">
-                    <TextField sx={{input: {color: '#FCFFF5'}}} variant='standard' label='Name' type='text' required onChange={handleChange} name='name' value={name}/>
+                    <TextField sx={{input: {color: '#FCFFF5'}}} variant='standard' label='Name' type='text' required onChange={handleChange} max_length={12} name='name' value={name}/>
                     <TextField multiline variant='standard' label='Description' type='text' required onChange={handleChange} name='description' value={description}/>
                     <TextField multiline variant='standard' label='Rules' type='text' required onChange={handleChange} name='rules' value={rules}/>
                     {/* <TextField variant='standard' label='Image URL' type='text' required onChange={handleChange} name='image' value={image}/> */}

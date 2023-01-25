@@ -1,14 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {toast} from 'react-hot-toast';
 
 import { storage, updateDocInCollection, createDocInCollection } from '../../utils/firebase/firebase.utils';
-import { ref, uploadBytesResumable, getDownloadURL, updateMetadata } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL, updateMetadata, uploadString } from 'firebase/storage';
+
+import Resizer from 'react-image-file-resizer';
 
 import { Box, Button, TextField } from '@mui/material';
+import { UserContext } from '../../contexts/user.context';
 
 const CatchForm = (props) => {
 
     const { userID, tournament, setOpenModal } = props;
+    const { currentUserUID } = useContext(UserContext);
 
     const defaultFormFields = {
         img: '',
@@ -19,9 +23,11 @@ const CatchForm = (props) => {
     };
     
     const [formFields, setFormFields] = useState(defaultFormFields);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [selectedImage, setSelectedImage] = useState('');
     const [previewImage, setPreviewImage] = useState('');
-    const [percent, setPercent] = useState(0);
+    const [resizedImage, setResizedImage] = useState('');
     const [isImageUploaded, setIsImageUploaded] = useState(false);
     
     const { size, description, } = formFields;
@@ -42,96 +48,77 @@ const CatchForm = (props) => {
         setPreviewImage(objectUrl);
     }, [selectedImage])
 
-    const handleUpload = () => {
+    useEffect(() => {
+        if(currentUserUID){
+            setFormFields({...formFields, author: currentUserUID});
+        }
+    }, [currentUserUID])
+
+    const handleUpload = async () => {
         if (!selectedImage) {
             toast.error('Please choose a file before uploading.');
             return;
         }
-
+        const newMetadata = {
+            cacheControl: 'public,max-age=300',
+            contentType: 'image/jpeg'
+        };
+        setIsUploading(true);
         const storageRef = ref(storage, `/catches/${selectedImage.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, selectedImage);
-        const newMetadata = {
-            cacheControl: 'public,max-age=300',
-            contentType: 'image/jpeg'
-        };
-
-        updateMetadata(storageRef, newMetadata)
-            .then((metadata) => {
-                // Updated metadata for 'images/forest.jpg' is returned in the Promise
-            }).catch((error) => {
-                console.error(error);
-            });
-
-        const newMetadata = {
-            cacheControl: 'public,max-age=300',
-            contentType: 'image/jpeg'
-        };
-        
-        updateMetadata(storageRef, newMetadata)
-            .then((metadata) => {
-                // Updated metadata for 'images/forest.jpg' is returned in the Promise
-            }).catch((error) => {
-                console.error(error);
-            });
-
-        uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-                const percent = Math.round(
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                );
-
-                setPercent(percent);
-            },
-            (err) => {toast.error(err); console.error(err)},
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                    setFormFields({ ...formFields, img: url});
-                    setIsImageUploaded(true);
-                })
-            }
-        )
-
+        console.log(storageRef);
+        uploadString(storageRef, resizedImage, 'data_url', newMetadata).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then((URL) => {
+                setFormFields({ ...formFields, img: URL})
+                setIsUploading(false);
+                setIsImageUploaded(true);
+            })
+        }).catch((err) => console.log(err));
     }
 
-    const handleFileChange = (event) => {
-        const image = event.target.files[0];
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
         if (!event.target.files || event.target.files.length === 0) {
             setSelectedImage(undefined);
             return;
         }
-        if(image.size > (5 * 1024 * 1024)){
+        if(file.size > (5 * 1024 * 1024)){
             toast.error('File must be less than 5MB.')
         } else {
-            setSelectedImage(image);
+            try{
+                const uri = await resizeFile(file);
+                setResizedImage(uri);
+                setSelectedImage(file);
+            } catch(err) {
+                console.error(err);
+            }
         }
     }
 
-    const resetFormFields = () => {
-        setFormFields(defaultFormFields);
-    };
+    const resizeFile = (file) =>
+        new Promise((resolve) => {
+            Resizer.imageFileResizer(file, 500, 500, 'jpeg', 100, 0, (uri) => {
+            resolve(uri);
+            });
+    });
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if(percent > 0 && percent < 100) {
-            toast.error('Wait for image to upload before submitting.')
-            return;
+        if(isUploading){
+            toast.error('Image is still uploading.');
         }
-
-        if(!isImageUploaded){
+        else if(!isImageUploaded){
             toast.error('You must upload your image before submitting.');
-            return;
         }
-
-        if(userID){
+        else if(currentUserUID){
             try {
-                setFormFields({...formFields, author: userID});
+                setIsSubmitting(true);
                 await createDocInCollection(formFields, 'catches').then(item => {
                     updateDocInCollection('tournaments', tournament.id, {catches: [...tournament.catches, item.data().id] })
                 })
-                resetFormFields();
+                setFormFields(defaultFormFields);
                 setOpenModal(false);
+                toast.success('Catch submitted!');
             } catch(error) {
                 toast.error(error);
             }
@@ -160,7 +147,7 @@ const CatchForm = (props) => {
             {selectedImage &&
                 <img width='300px' src={previewImage} alt='Catch submission' />
             }
-            {selectedImage && (percent < 100) &&
+            {selectedImage &&
                 <Button variant='contained' sx={{width: 150, backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, mt: 2 , '&:hover': {backgroundColor: '#576a60'}}} onClick={handleUpload}>Upload file</Button>
             }
             <TextField sx={{mb: 2, label: {color: '#FCFFF5'}, input: {color: '#FCFFF5'}}} type='number' min='0' required variant='outlined' label='Size (inches)' onChange={handleChange} name='size' value={Math.abs(size)}></TextField>

@@ -16,6 +16,7 @@ const clearTournament = (tournaments, tournamentToClear) => {
 export const TournamentsContext = createContext({
     tournaments: [],
     isLoading: false,
+    addTournament: () => null,
 })
 
 
@@ -23,16 +24,17 @@ export const TournamentsContext = createContext({
 export const TournamentsProvider = ({children}) => {
     const [tournaments, setTournaments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const value = { tournaments, isLoading }
+    const value = { tournaments, isLoading, addTournament }
     
     useEffect(() => {
         async function getTournaments() {
+            setIsLoading(true);
             const t = await getDocsInCollection('tournaments');
             setTournaments(t);
+            setIsLoading(false);
         }
-        setIsLoading(true);
+        
         getTournaments();
-        setIsLoading(false);
     }, [])
 
     return (

@@ -4,7 +4,7 @@ import { useEffect, useState, useContext } from 'react';
 import { getDocInCollection, updateDocInCollection } from '../../utils/firebase/firebase.utils';
 
 import './tournament-card.styles.css'
-import { UserGroupIcon } from '@heroicons/react/24/solid';
+import { CalendarDaysIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 
 import { UserContext } from '../../contexts/user.context';
 
@@ -21,6 +21,7 @@ const TournamentCard = ({tournament}) => {
     max_participants,
     participants,
     end_date,
+    start_date,
     image,
     id,
     author,
@@ -34,13 +35,15 @@ const TournamentCard = ({tournament}) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
+  const new_start_date = new Date(start_date.seconds * 1000).toLocaleDateString('en-US');;
 
   useEffect(() => {
           async function getUserData() {
               const user = await getDocInCollection('users', author);
               setUserName(user.data().displayName);
               setCanRegister((participants && participants.length < max_participants) || !participants.includes(currentUserUID));
-          }
+              setIsLoading(false);
+            }
           if(author){
             getUserData();
           }
@@ -87,7 +90,7 @@ const TournamentCard = ({tournament}) => {
 
   return (
     <div key={id} 
-    className={`group rounded-md relative duration-200 transform transition-opacity ${isLoading ? 'opacity-0' : 'opacity-100'} ease-out`}
+    className={`group bg-gray-100 p-5 rounded-md relative duration-200 transform transition-opacity ${isLoading ? 'opacity-0' : 'opacity-100'} ease-out`}
      >
       <div className="relative group min-h-80 aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 transition-opacity lg:aspect-none lg:h-80">
         <img
@@ -113,7 +116,7 @@ const TournamentCard = ({tournament}) => {
         </div>
       <div className="mt-4 flex justify-between">
         <div>
-          <h3 className="text-sm text-gray-700">
+          <h3 className="text-sm text-gray-700 mr-1">
             <Link to={`/tournament/${id}`}>
               {name}
             </Link>
@@ -125,8 +128,15 @@ const TournamentCard = ({tournament}) => {
             {participants ? participants.length : '0'}/{max_participants}
           </p>
         </div>
-        <p className="text-sm font-medium text-gray-900">${registration_fee}</p>
       </div>
+      <div className='flex gap-2 flex-row justify-between'>
+        <div className='flex flex-row gap-2'>
+          <CalendarDaysIcon className='h-5 w-5' aria-hidden='true'/>
+          <p className="text-sm font-medium text-gray-900">{new_start_date}</p>
+        </div>
+          <p className="text-sm font-medium text-gray-900">-</p>
+          <p className="text-sm font-medium text-gray-900">{new_end_date}</p>
+        </div>
     </div>
   );
 }
