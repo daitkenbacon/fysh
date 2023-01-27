@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 
-import { onAuthStateChangedListener, createUserDocumentFromAuth, getDocInCollection } from '../utils/firebase/firebase.utils';
+import { onAuthStateChangedListener, createUserDocumentFromAuth, getDocInCollection, getDocsInCollection } from '../utils/firebase/firebase.utils';
 
 //actual value i want to access
 export const UserContext = createContext({
@@ -28,10 +28,24 @@ export const UserProvider = ({ children }) => {
             }
             setCurrentUser(user); //listener either returns null or a user, whether logged in, signing out, or default. Can set it here since listener is active to help performance
         })
+        async function getUsers() {
+            const u = await getDocsInCollection('users');
+            setUsers(u);
+        }
         
+        getUsers();
         return unsubscribe; //stop listening when unmounted
     }, [])
+
+    const getUser = (id) => {
+        if(users){
+            return users.find(u => u.uid === id);
+        }
+        else{
+            return null;
+        }
+    }
     
-    const value = { currentUser, setCurrentUser, currentUserUID, currentUserName, users }
+    const value = { currentUser, setCurrentUser, currentUserUID, currentUserName, users, getUser }
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }
