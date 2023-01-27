@@ -15,28 +15,42 @@ const clearTournament = (tournaments, tournamentToClear) => {
 
 export const TournamentsContext = createContext({
     tournaments: [],
+    catches: [],
     isLoading: false,
     addTournament: () => null,
+    getTournament: (id) => null,
+    getCatch: (id) => null,
 })
 
 
 
 export const TournamentsProvider = ({children}) => {
     const [tournaments, setTournaments] = useState([]);
+    const [catches, setCatches] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const value = { tournaments, isLoading, addTournament }
     
     useEffect(() => {
         async function getTournaments() {
             setIsLoading(true);
             const t = await getDocsInCollection('tournaments');
             setTournaments(t);
+            const c = await getDocsInCollection('catches');
+            setCatches(c);
             setIsLoading(false);
         }
         
         getTournaments();
     }, [])
+    
+    const getTournament = (id) => {
+        return tournaments.find(t => t.id === id);
+    }
 
+    const getCatch = (id) => {
+        return catches.find(c => c.id === id);
+    }
+    
+    const value = { tournaments, isLoading, addTournament, catches, getTournament, getCatch }
     return (
         <TournamentsContext.Provider value={value}> {children} </TournamentsContext.Provider>
     )

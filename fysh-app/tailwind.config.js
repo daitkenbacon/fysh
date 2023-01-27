@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      gridTemplateRows: {
+          '[auto,auto,1fr]': 'auto auto 1fr',
+        },
       keyframes: {
         'grow-110': {
           '0%': { transform: 'scale(1)' },

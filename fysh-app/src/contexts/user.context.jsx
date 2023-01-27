@@ -8,14 +8,16 @@ export const UserContext = createContext({
     currentUserUID: null,
     setCurrentUser: () => null,
     currentUserName: null,
+    users: [],
+    getUser: (id) => null,
 });
 
 export const UserProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [currentUserUID, setCurrentUserUID] = useState('');
     const [currentUserName, setCurrentUserName] = useState('');
-    const value = { currentUser, setCurrentUser, currentUserUID, currentUserName }
-
+    const [users, setUsers] = useState([]);
+    
     useEffect(() => {
         const unsubscribe = onAuthStateChangedListener((user) => { //cleanup at end of stream
             if(user){
@@ -26,9 +28,10 @@ export const UserProvider = ({ children }) => {
             }
             setCurrentUser(user); //listener either returns null or a user, whether logged in, signing out, or default. Can set it here since listener is active to help performance
         })
-
+        
         return unsubscribe; //stop listening when unmounted
     }, [])
-
+    
+    const value = { currentUser, setCurrentUser, currentUserUID, currentUserName, users }
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }
