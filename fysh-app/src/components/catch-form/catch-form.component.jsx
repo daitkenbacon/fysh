@@ -55,6 +55,7 @@ const CatchForm = (props) => {
     }, [currentUserUID])
 
     const handleUpload = async () => {
+        setIsUploading(true);
         if (!selectedImage) {
             toast.error('Please choose a file before uploading.');
             return;
@@ -63,7 +64,6 @@ const CatchForm = (props) => {
             cacheControl: 'public,max-age=300',
             contentType: 'image/jpeg'
         };
-        setIsUploading(true);
         const storageRef = ref(storage, `/catches/${selectedImage.name}`);
         console.log(storageRef);
         uploadString(storageRef, resizedImage, 'data_url', newMetadata).then((snapshot) => {
@@ -73,6 +73,7 @@ const CatchForm = (props) => {
                 setIsImageUploaded(true);
             })
         }).catch((err) => console.log(err));
+        setIsUploading(false);
     }
 
     const handleFileChange = async (event) => {
@@ -129,30 +130,67 @@ const CatchForm = (props) => {
     };
 
     return (
-        <form className='catch-modal-form' onSubmit={handleSubmit}>
-            <Button
-                variant="contained"
-                component="label"
-                sx={{width: 150, backgroundColor: '#91AA9D', color: '#FCFFF5', mr: 2, mb: 2, '&:hover': {backgroundColor: '#576a60'}}}
-            >
-                Add an image
+        <form onSubmit={handleSubmit}>
+            <div className='mx-5'>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                    Brief description
+                </label>
+                <div className="relative mt-1 rounded-md shadow-sm">
+                    <input
+                    type="text"
+                    name="description"
+                    maxLength={35}
+                    value={description}
+                    onChange={handleChange}
+                    id="description"
+                    className="mb-2 block w-full rounded-md border-gray-300 pl-3 pr-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="My 15lb bass"
+                    />
+                </div>
+            </div>
+            <div className='mx-5'>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                    Size (inches)
+                </label>
+                <div className="relative mt-1 rounded-md shadow-sm">
+                    <input
+                    type="number"
+                    name="size"
+                    value={Math.abs(size)}
+                    onChange={handleChange}
+                    id="size"
+                    className="mb-2 block w-full rounded-md border-gray-300 pl-3 pr-3 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    placeholder="15"
+                    />
+                </div>
+            </div>
+            <div className="relative mb-2 mx-5 rounded-md shadow-sm">
                 <input
+                    className="p-2 block w-full rounded-md border-gray-300 sm:text-sm"
                     required={true}
                     type="file"
                     accept='image/*'
                     onChange={handleFileChange}
-                    hidden
                 />
-            </Button>
+            </div>
+            
             {selectedImage &&
-                <img width='300px' src={previewImage} alt='Catch submission' />
+            <div className='w-full px-5 flex flex-col justify-center content-center items-center'>
+                <img className='rounded-lg mx-h-500' src={previewImage} alt='Catch submission' />
+            </div>
             }
             {selectedImage &&
-                <Button variant='contained' sx={{width: 150, backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, mt: 2 , '&:hover': {backgroundColor: '#576a60'}}} onClick={handleUpload}>Upload file</Button>
+            <div className='mx-5'>
+                <button onClick={handleUpload} type="button" className="w-full my-2 justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:mx-3 sm:w-auto sm:text-sm">
+                    {`${isUploading ? 'Uploading...' : 'Upload Image'}`}
+                </button>  
+            </div>
             }
-            <TextField sx={{mb: 2, label: {color: '#FCFFF5'}, input: {color: '#FCFFF5'}}} type='number' min='0' required variant='outlined' label='Size (inches)' onChange={handleChange} name='size' value={Math.abs(size)}></TextField>
-            <TextField sx={{mb: 2, label: {color: '#FCFFF5'}, input: {color: '#FCFFF5'}}} type='text' required variant='outlined' label='Description' onChange={handleChange} name='description' value={description} inputProps={{ maxLength: 50 }}></TextField>
-            <Button sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} variant='contained' type='submit'>Submit</Button>
+            
+            <div className="bg-gray-50 w-full px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm">Submit</button>
+                <button onClick={() => setOpenModal(false)} type="button" className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Cancel</button>
+            </div>
         </form>
     )
 }
