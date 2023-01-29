@@ -4,6 +4,8 @@ import { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../../contexts/user.context';
 import { TournamentsContext } from '../../contexts/tournaments.context';
 
+import { ClipboardIcon, CalendarIcon, ClockIcon, TrophyIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+
 const defaultCatch = {
     author: '',
     time_submitted: '',
@@ -18,7 +20,7 @@ const CatchCard = (props) => {
     const [isCatchOwner, setIsCatchOwner] = useState(false);
     const { currentUserUID } = useContext(UserContext);
     const { getCatch, catches } = useContext(TournamentsContext);
-    const {isHost, declareWinner, isOpen, removeSubmission, submission} = props;
+    const {isHost, declareWinner, isOpen, removeSubmission, submission, openModal} = props;
     const [catchDate, setCatchDate] = useState('');
     const [catchTime, setCatchTime] = useState('');
     const [userName, setUserName] = useState('');
@@ -55,24 +57,39 @@ const CatchCard = (props) => {
     }, [catchItem])
 
     return (
-        <div className="bg-white max-w-sm rounded-lg overflow-hidden shadow-lg">
-            <img src={catchItem.img} alt={catchItem.description} className="w-full max-w-sm h-48 object-cover"/>
-            {isCatchOwner && isOpen &&
-                    <button onClick={() => removeSubmission(submission)} className='delete-catch-button'>
-                        X
+        <div className={`${isCatchOwner ? 'bg-leaf-600' : 'bg-white'} max-w-sm rounded-lg overflow-hidden shadow-lg`}>
+            <img onClick={() => openModal(catchItem)} src={catchItem.img} alt={catchItem.description} className="hover:opacity-70 cursor-pointer w-full rounded shadow max-w-sm h-48 object-cover"/>
+            <div className="px-6 py-3">
+                <p className={`${isCatchOwner ? 'text-white' : 'text-gray-800'} text-base`}>{catchItem.description}</p>
+            </div>
+            <div className="px-2 pb-4">
+                <span className="inline-flex gap-1 flex-row bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700 mr-2">
+                    <ClipboardIcon className='w-5'/>
+                    {catchItem.size} inches
+                    </span>
+                <span className="inline-flex gap-1 bg-blue-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700 mr-2">
+                    <UserCircleIcon className='w-5'/>
+                    {userName}
+                    </span>
+                <span className="inline-flex gap-1 bg-green-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700 mr-2">
+                     <CalendarIcon className='w-5'/>
+                     {catchDate}
+                     </span>
+                <span className="inline-flex gap-1 bg-green-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700 mr-2">
+                     <ClockIcon className='w-5'/>
+                     {catchTime}
+                     </span>
+            </div>
+            <div className='flex flex-row'>
+                {isHost && isOpen &&
+                    <button onClick={() => declareWinner(submission)} className='bg-gray-200 hover:bg-gray-300 p-2 left-0 w-full bottom-0 declare-winner-button'>Declare winner</button>
+                }
+                {isCatchOwner && isOpen &&
+                    <button onClick={() => removeSubmission(submission)} className='bg-red-200 hover:bg-red-300 p-2 right-0 bottom-0 w-full delete-catch-button'>
+                        Delete
                     </button>
                 }
-            <div className="px-6 py-4">
-                <p className="text-gray-700 text-base">{catchItem.description}</p>
             </div>
-            <div className="px-6 py-4">
-                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-medium text-gray-700 mr-2">{catchItem.size} inches</span>
-                <span className="text-gray-600">Caught by {userName}</span>
-                <span className="text-gray-600"> on {catchDate} at {catchTime}</span>
-            </div>
-            {isHost && isOpen &&
-                    <button onClick={() => declareWinner(submission)} className='declare-winner-button'>Declare winner</button>
-                }
         </div>
     )
 }

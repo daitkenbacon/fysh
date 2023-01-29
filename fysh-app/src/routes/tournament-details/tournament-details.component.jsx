@@ -39,20 +39,31 @@ const TournamentDetails = () => {
     const [startDate, setStartDate] = useState('');
     const [winnerCatch, setWinnerCatch] = useState('');
     const [endDate, setEndDate] = useState('');
+
+    const [selectedCatch, setSelectedCatch] = useState();
     
-    const [openModal, setOpenModal] = useState(false);
+    const [openFormModal, setOpenFormModal] = useState(false);
+    const [openCatchModal, setOpenCatchModal] = useState(false);
     const [isHost, setisHost] = useState(false);
     const [isTournamentOpen, setIsTournamentOpen] = useState(false);
     const [trigger, setTrigger] = useState(false);
 
-    const handleOpen = () => {
+    const handleOpenFormModal = () => {
         if(!participants.includes(currentUserUID)){
             toast.error('You are not registered for this tournament!')
         } else {
-            setOpenModal(true);
+            setOpenFormModal(true);
         }
     }
-    const handleClose = () => setOpenModal(false);
+    const handleCloseFormModal = () => setOpenFormModal(false);
+
+    const handleOpenCatchModal = (catchItem) => {
+        if(catchItem){
+            setSelectedCatch(catchItem);
+            setOpenCatchModal(true);
+        }
+    }
+    const handleCloseCatchModal = () => setOpenCatchModal(false);
     
     const { name, description, image, rules, participants, max_participants, registration_fee, catches, winner, isOpen } = tournament;
     
@@ -151,15 +162,16 @@ const TournamentDetails = () => {
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Catches</h1>
                     <button 
                     disabled={!isTournamentOpen}
-                    onClick={handleOpen}
+                    onClick={handleOpenFormModal}
                     className="lg:border-b flex items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Submit a Catch
                     </button>
                 </div>
-                <div className="lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pt-8 lg:pb-8">
-                {catches &&
+                <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+                {catches && //CatchCard list
                     catches.map(card => (
-                        <CatchCard 
+                        <CatchCard
+                        openModal={handleOpenCatchModal}
                         userID={currentUserUID} 
                         isOpen={isTournamentOpen} 
                         declareWinner={declareWinner} 
@@ -169,7 +181,7 @@ const TournamentDetails = () => {
                     ))}
                 </div>
             </div>
-            {openModal && //Catch Form Modal
+            {openFormModal && //Catch Form Modal
                 <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"/>
                     <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -190,7 +202,24 @@ const TournamentDetails = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <CatchForm userID={currentUserUID} tournament={tournament} setOpenModal={setOpenModal}/>
+                                <CatchForm userID={currentUserUID} tournament={tournament} setOpenFormModal={setOpenFormModal}/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {openCatchModal && //Catch Image Modal
+                <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"/>
+                    <div className="fixed inset-0 z-10">
+                        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                            <div className="relative transform overflow-hidden rounded-lg bg-white text-center shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <img className="w-full rounded-t" src={selectedCatch.img}/>
+                                                <button className="p-3 text-white font-bold w-full bg-red-500 rounded-b" onClick={handleCloseCatchModal}>
+                                                    Close
+                                                </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -243,7 +272,7 @@ export default TournamentDetails;
 //                 </div>
 //                 <h2>{`${catches ? catches.length : 'No'} Submissions${isTournamentOpen ? '' : ' (CLOSED)'}`}</h2>
 //                 {isTournamentOpen &&
-//                     <Button onClick={handleOpen} variant='contained'>Submit a Catch</Button>
+//                     <Button onClick={handleOpenFormModal} variant='contained'>Submit a Catch</Button>
 //                 }
 //                 <div className="submissions-container">
 //                     {catches &&
@@ -256,13 +285,13 @@ export default TournamentDetails;
 //                 </div>
 //             </div>
 //             <Modal
-//                 open={openModal}
-//                 onClose={handleClose}
+//                 open={openFormModal}
+//                 onClose={handleCloseFormModal}
 //                 aria-labelledby="Submit a Catch"
 //                 aria-describedby="Upload a catch to submit to the tournament."
 //             >
 //                 <Box sx={modalStyle}>
-//                     <CatchForm setOpenModal={setOpenModal} userID={currentUserUID} tournament={tournament}/>
+//                     <CatchForm setOpenFormModal={setOpenFormModal} userID={currentUserUID} tournament={tournament}/>
 //                 </Box>
 //             </Modal>
 //         </div>

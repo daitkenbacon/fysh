@@ -11,7 +11,7 @@ import { UserContext } from '../../contexts/user.context';
 
 const CatchForm = (props) => {
 
-    const { userID, tournament, setOpenModal } = props;
+    const { userID, tournament, setOpenFormModal } = props;
     const { currentUserUID } = useContext(UserContext);
 
     const defaultFormFields = {
@@ -118,7 +118,7 @@ const CatchForm = (props) => {
                     updateDocInCollection('tournaments', tournament.id, {catches: [...tournament.catches, item.data().id] })
                 })
                 setFormFields(defaultFormFields);
-                setOpenModal(false);
+                setOpenFormModal(false);
                 toast.success('Catch submitted!');
             } catch(error) {
                 toast.error(error);
@@ -191,7 +191,7 @@ const CatchForm = (props) => {
             
             <div className="bg-gray-50 w-full px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button type="submit" className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm">Submit</button>
-                <button onClick={() => setOpenModal(false)} type="button" className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Cancel</button>
+                <button onClick={() => setOpenFormModal(false)} type="button" className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Cancel</button>
             </div>
         </form>
     )
