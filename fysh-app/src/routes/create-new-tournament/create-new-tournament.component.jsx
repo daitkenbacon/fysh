@@ -20,12 +20,14 @@ import { UserContext } from '../../contexts/user.context';
 
 import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
+import { TournamentsContext } from '../../contexts/tournaments.context';
 
 
 
 const TournamentForm = () => {
 
     const { currentUser, currentUserUID } = useContext(UserContext);
+    const { addTournament } = useContext(TournamentsContext);
 
     const defaultFormFields = {
         name: '', 
@@ -91,6 +93,7 @@ const TournamentForm = () => {
             try{
                 setIsLoading(true);
                 await createDocInCollection(formFields, 'tournaments');
+                addTournament(formFields);
                 setFormFields(defaultFormFields);
                 setIsLoading(false);
                 console.log('Finished uploading: ', formFields);

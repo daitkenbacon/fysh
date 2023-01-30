@@ -57,7 +57,7 @@ const CatchCard = (props) => {
     }, [catchItem])
 
     return (
-        <div className={`${isCatchOwner ? 'bg-leaf-600' : 'bg-white'} max-w-sm rounded-lg overflow-hidden shadow-lg`}>
+        <div className={`${isCatchOwner ? 'bg-gray-500' : 'bg-white'} max-w-sm rounded-lg overflow-hidden shadow-lg`}>
             <img onClick={() => openModal(catchItem)} src={catchItem.img} alt={catchItem.description} className="hover:opacity-70 cursor-pointer w-full rounded shadow max-w-sm h-48 object-cover"/>
             <div className="px-6 py-3">
                 <p className={`${isCatchOwner ? 'text-white' : 'text-gray-800'} text-base`}>{catchItem.description}</p>
@@ -82,10 +82,10 @@ const CatchCard = (props) => {
             </div>
             <div className='flex flex-row'>
                 {isHost && isOpen &&
-                    <button onClick={() => declareWinner(submission)} className='bg-gray-200 hover:bg-gray-300 p-2 left-0 w-full bottom-0 declare-winner-button'>Declare winner</button>
+                    <button onClick={() => declareWinner(submission)} className='bg-blue-600 text-white hover:bg-blue-700 p-2 left-0 w-full bottom-0 declare-winner-button'>Declare winner</button>
                 }
                 {isCatchOwner && isOpen &&
-                    <button onClick={() => removeSubmission(submission)} className='bg-red-200 hover:bg-red-300 p-2 right-0 bottom-0 w-full delete-catch-button'>
+                    <button onClick={() => removeSubmission(submission)} className='bg-red-600 hover:bg-red-700 text-white p-2 right-0 bottom-0 w-full delete-catch-button'>
                         Delete
                     </button>
                 }

@@ -30,7 +30,7 @@ const modalStyle = {
 
 const TournamentDetails = () => {
     const { currentUserUID } = useContext(UserContext);
-    const { tournaments, getTournament } = useContext(TournamentsContext);
+    const { tournaments, getTournament, getCatch } = useContext(TournamentsContext);
     
     const { id } = useParams();
     
@@ -73,9 +73,11 @@ const TournamentDetails = () => {
             setTournament(t);
             setStartDate(new Date(t.start_date.seconds * 1000).toLocaleDateString('en-US'));
             setEndDate(new Date(t.end_date.seconds * 1000).toLocaleDateString('en-US'));
-            setisHost(t.author==currentUserUID);
+            setisHost(t.author===currentUserUID);
             setIsTournamentOpen(t.isOpen);
-            setWinnerCatch(t.winner);
+            if(t.winner){
+                setWinnerCatch(getCatch(t.winner));
+            }
         }
     }, [tournaments])
 
@@ -83,7 +85,7 @@ const TournamentDetails = () => {
         try {
             updateDocInCollection('tournaments', id, {...tournament, winner: submissionId, isOpen: false});
             setIsTournamentOpen(false);
-            setWinnerCatch(submissionId);
+            setWinnerCatch(getCatch(submissionId));
         } catch (err) {
             console.error(err);
         }
@@ -148,18 +150,22 @@ const TournamentDetails = () => {
                         </div>
 
                         <div className="mt-10">
-                            <h2 className="text-sm font-medium text-gray-900">Rules</h2>
+                            <h2 className="text-lg font-bold text-gray-900">Rules</h2>
 
                             <div className="mt-4 space-y-6">
-                                <p className="text-sm text-gray-600">{rules}</p>
+                                <p className="text-md text-gray-600">{rules}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Catches Footer */}
             <div className="mx-auto max-w-2xl px-4 pt-5 pb-16 sm:px-6 lg:grid lg:max-w-7xl">
                 <div className="mx-auto w-full pt-2 border-t flex flex-row justify-between">
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Catches</h1>
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                        Catches {catches && catches.length > 0 ? `(${catches.length})` : ''}
+                        </h1>
                     <button 
                     disabled={!isTournamentOpen}
                     onClick={handleOpenFormModal}
@@ -167,6 +173,7 @@ const TournamentDetails = () => {
                         Submit a Catch
                     </button>
                 </div>
+
                 <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                 {catches && //CatchCard list
                     catches.map(card => (
@@ -181,6 +188,7 @@ const TournamentDetails = () => {
                     ))}
                 </div>
             </div>
+
             {openFormModal && //Catch Form Modal
                 <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"/>
@@ -194,7 +202,7 @@ const TournamentDetails = () => {
                                         </div>
                                         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                         <h3 className="text-lg font-medium leading-6 text-gray-900" id="modal-title">Submit a Catch</h3>
-                                            <div className="mt-2">
+                                            <div>
                                                 <p className="text-sm text-gray-500">
                                                     Submit your catch for the tournament!
                                                 </p>
@@ -213,10 +221,11 @@ const TournamentDetails = () => {
                     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"/>
                     <div className="fixed inset-0 z-10">
                         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                            <div className="relative transform overflow-hidden rounded-lg bg-white text-center shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                            <div className="relative transform pt-1 overflow-hidden rounded-lg bg-white text-center shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                {selectedCatch.description}
                                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                     <img className="w-full rounded-t" src={selectedCatch.img}/>
-                                                <button className="p-3 text-white font-bold w-full bg-red-500 rounded-b" onClick={handleCloseCatchModal}>
+                                                <button className="p-3 text-white hover:bg-red-600 font-bold w-full bg-red-500 rounded-b" onClick={handleCloseCatchModal}>
                                                     Close
                                                 </button>
                                 </div>

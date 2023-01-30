@@ -8,11 +8,13 @@ import Resizer from 'react-image-file-resizer';
 
 import { Box, Button, TextField } from '@mui/material';
 import { UserContext } from '../../contexts/user.context';
+import { TournamentsContext } from '../../contexts/tournaments.context';
 
 const CatchForm = (props) => {
 
     const { userID, tournament, setOpenFormModal } = props;
     const { currentUserUID } = useContext(UserContext);
+    const { addCatch } = useContext(TournamentsContext);
 
     const defaultFormFields = {
         img: '',
@@ -117,6 +119,7 @@ const CatchForm = (props) => {
                 await createDocInCollection(formFields, 'catches').then(item => {
                     updateDocInCollection('tournaments', tournament.id, {catches: [...tournament.catches, item.data().id] })
                 })
+                addCatch(formFields);
                 setFormFields(defaultFormFields);
                 setOpenFormModal(false);
                 toast.success('Catch submitted!');

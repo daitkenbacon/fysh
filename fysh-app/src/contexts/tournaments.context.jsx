@@ -3,12 +3,6 @@ import { createContext, useState } from "react";
 
 import { getDocsInCollection } from '../utils/firebase/firebase.utils';
 
-const addTournament = (tournaments, tournamentToAdd) => {
-    return (
-        [...tournaments, { ...tournamentToAdd, quantity: 1}]
-    );
-}
-
 const clearTournament = (tournaments, tournamentToClear) => {
     return tournaments.filter(tournament => tournament.id !== tournamentToClear.id);
 }
@@ -17,7 +11,8 @@ export const TournamentsContext = createContext({
     tournaments: [],
     catches: [],
     isLoading: false,
-    addTournament: () => null,
+    addTournament: (tournament) => null,
+    addCatch: (submission) => null,
     getTournament: (id) => null,
     getCatch: (id) => null,
 })
@@ -28,6 +23,14 @@ export const TournamentsProvider = ({children}) => {
     const [tournaments, setTournaments] = useState([]);
     const [catches, setCatches] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const addTournament = (tournamentToAdd) => {
+        setTournaments([...tournaments, tournamentToAdd]);
+    }
+
+    const addCatch = (catchToAdd) => {
+        setCatches([...catches, catchToAdd]);
+    }
     
     useEffect(() => {
         async function getTournaments() {
@@ -50,7 +53,7 @@ export const TournamentsProvider = ({children}) => {
         return catches.find(c => c.id === id);
     }
     
-    const value = { tournaments, isLoading, addTournament, catches, getTournament, getCatch }
+    const value = { tournaments, isLoading, addTournament, addCatch, catches, getTournament, getCatch }
     return (
         <TournamentsContext.Provider value={value}> {children} </TournamentsContext.Provider>
     )
