@@ -121,7 +121,7 @@ const TournamentCard = ({tournament}) => {
         </div>
       <div className="mt-4 flex justify-between">
         <div>
-          <h3 className="text-sm text-gray-700 mr-1">
+          <h3 className="text-sm font-bold text-gray-700 mr-1">
             <Link to={`/tournament/${id}`}>
               {name}
             </Link>

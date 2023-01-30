@@ -7,7 +7,7 @@ import { UserContext } from '../../contexts/user.context';
 import { getDocInCollection, updateDocInCollection, deleteDocInCollection } from "../../utils/firebase/firebase.utils";
 
 import { CalendarDaysIcon, UserGroupIcon } from '@heroicons/react/24/solid';
-import { DocumentPlusIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';
 
 import { toast, Toaster } from 'react-hot-toast';
 import CatchForm from "../../components/catch-form/catch-form.component";
@@ -39,6 +39,8 @@ const TournamentDetails = () => {
     const [startDate, setStartDate] = useState('');
     const [winnerCatch, setWinnerCatch] = useState('');
     const [endDate, setEndDate] = useState('');
+
+    const [daysOpen, setDaysOpen] = useState(1);
 
     const [selectedCatch, setSelectedCatch] = useState();
     
@@ -75,11 +77,22 @@ const TournamentDetails = () => {
             setEndDate(new Date(t.end_date.seconds * 1000).toLocaleDateString('en-US'));
             setisHost(t.author===currentUserUID);
             setIsTournamentOpen(t.isOpen);
-            if(t.winner){
-                setWinnerCatch(getCatch(t.winner));
-            }
+
+            var d1 = new Date(t.start_date.seconds * 1000);
+            var d2 = new Date(t.end_date.seconds * 1000)
+
+            var timeDiff = d2.getTime() - d1.getTime();
+
+            setDaysOpen((timeDiff * 1000 * 3600 * 24) + 1);
         }
     }, [tournaments])
+
+    useEffect(() => {
+        if(winner){
+            let item = getCatch(winner)
+                setWinnerCatch(item);
+            }
+    }, [winner])
 
     const declareWinner = async (submissionId) => {
         try {
@@ -126,24 +139,39 @@ const TournamentDetails = () => {
                     </div>
                     {/* Options */}
                     <div className="lg:row-span-3 lg:mt-0 flex flex-col items-center">
-                        <button
+                        {winnerCatch &&
+                            <button
+                            onClick={() => {handleOpenCatchModal(winnerCatch)}}
+                            className="lg:border-b flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            >
+                                See Winning Catch!
+                            </button>
+                        }
+                        {isTournamentOpen && !participants.includes(currentUserUID) &&
+                            <button
                             type="submit"
                             className="lg:border-b flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Register for Tournament
-                        </button>
+                            >
+                                Register for Tournament
+                            </button>
+                        }
                         <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center">
-                            <CalendarDaysIcon className="h-8 w-8"/>
+                            <CalendarDaysIcon className="h-8 w-8 text-leaf-600"/>
                             <p className="text-2xl tracking-tight text-gray-900">{startDate}</p>
-                            <p className="text-2xl tracking-tight text-gray-900">-</p>
-                            <p className="text-2xl tracking-tight text-gray-900"> {endDate}</p>
+                        </div>
+                        <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center">
+                            <ClockIcon className="h-8 text-leaf-600 w-8"/>
+                            <p className="text-2xl tracking-tight text-gray-900">{`${daysOpen} ${daysOpen > 1 ? 'Days' : 'Day'}`}</p>
+                        </div>
+                        <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center rounded">
+                            <UserGroupIcon className="h-8 text-leaf-600"/>
+                            <p className="text-2xl tracking-tight text-gray-900">{participants? participants.length : '0'} / {max_participants}</p>
                         </div>
                     </div>
                     <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pt-6 lg:pb-16 lg:pr-8">
                         {/* Description and details */}
                         <div>
                             <h3 className="sr-only">Description</h3>
-
                             <div className="space-y-6">
                                 <p className="text-base text-gray-900">{description}</p>
                             </div>
@@ -151,7 +179,6 @@ const TournamentDetails = () => {
 
                         <div className="mt-10">
                             <h2 className="text-lg font-bold text-gray-900">Rules</h2>
-
                             <div className="mt-4 space-y-6">
                                 <p className="text-md text-gray-600">{rules}</p>
                             </div>
@@ -166,12 +193,14 @@ const TournamentDetails = () => {
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                         Catches {catches && catches.length > 0 ? `(${catches.length})` : ''}
                         </h1>
+                    {isTournamentOpen &&
                     <button 
                     disabled={!isTournamentOpen}
                     onClick={handleOpenFormModal}
                     className="lg:border-b flex items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Submit a Catch
                     </button>
+                    }
                 </div>
 
                 <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">

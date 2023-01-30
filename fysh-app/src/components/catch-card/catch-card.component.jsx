@@ -20,7 +20,7 @@ const CatchCard = (props) => {
     const [isCatchOwner, setIsCatchOwner] = useState(false);
     const { currentUserUID } = useContext(UserContext);
     const { getCatch, catches } = useContext(TournamentsContext);
-    const {isHost, declareWinner, isOpen, removeSubmission, submission, openModal} = props;
+    const {isHost, declareWinner, isOpen, removeSubmission, submission, openModal } = props;
     const [catchDate, setCatchDate] = useState('');
     const [catchTime, setCatchTime] = useState('');
     const [userName, setUserName] = useState('');
