@@ -53,7 +53,7 @@ const TournamentList = () => {
                         type="text"
                         name="filter"
                         id="filter"
-                        className="placeholder:text-clip placeholder:truncate block w-full rounded-md border-gray-300 pl-4 pr-2 focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
+                        className="placeholder:text-clip placeholder:truncate block w-full rounded-md border-gray-300 pl-4 pr-2 focus:border-blue-500 focus:ring-blue-500 sm:text-lg"
                         placeholder="Search tournaments"
                     />
                 </div>
