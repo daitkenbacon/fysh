@@ -1,8 +1,4 @@
 import React from 'react';
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import Resizer from 'react-image-file-resizer';
 
@@ -11,7 +7,7 @@ import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { createDocInCollection, storage } from "../../utils/firebase/firebase.utils";
-import { ref, uploadBytesResumable, getDownloadURL, updateMetadata, uploadString } from 'firebase/storage';
+import { ref, getDownloadURL, uploadString } from 'firebase/storage';
 
 import './tournament-form.styles.css';
 
@@ -162,7 +158,153 @@ const TournamentForm = () => {
     const [endValue, setEndValue] = useState(null);
 
     return (
-        <div>
+    <>
+      <div className='lg: pt-20 p-5 max-w-screen-xl mx-auto'>
+        <div className="md:grid md:grid-cols-3 md:gap-6">
+          <div className="md:col-span-1">
+            <div className="px-4 sm:px-0">
+              <h3 className="text-3xl font-medium leading-6 text-gray-900">New Tournament</h3>
+              <p className="mt-1 text-md text-gray-600">
+                Get fyshing! Enter all of the details for your tournament here. All fields are required.
+              </p>
+            </div>
+          </div>
+          <div className="mt-5 md:col-span-2 md:mt-0">
+            <form action="#" method="POST">
+              <div className="shadow sm:overflow-hidden sm:rounded-md">
+                <div className="space-y-6 bg-white px-4 py-5 sm:p-6">
+                  <div className="grid grid-cols-3 gap-6">
+                    <div className="col-span-3 sm:col-span-2">
+                      <label htmlFor="name" className="block text-md font-medium text-gray-700">
+                        Tournament Name
+                      </label>
+                      <div className="mt-1 flex rounded-md shadow-sm">
+                        <input
+                          onChange={handleChange}
+                          type="text"
+                          name="name"
+                          id="name"
+                          value={name}
+                          className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          placeholder="Joe's Crab Catch for Cash"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="description" className="block text-md font-medium text-gray-700">
+                      About
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="description"
+                        onChange={handleChange}
+                        name="description"
+                        value={description}
+                        rows={3}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        placeholder="This is a crab-catching tournament for fyshers all over."
+                        defaultValue={''}
+                      />
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Brief description for your tournament.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="rules" className="block text-md font-medium text-gray-700">
+                      Rules
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="rules"
+                        onChange={handleChange}
+                        name="rules"
+                        value={rules}
+                        rows={3}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        placeholder="This is a crab-catching tournament for fyshers all over."
+                        defaultValue={''}
+                      />
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Set the rules! Be specific, but simple.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-md font-medium text-gray-700">Cover photo</label>
+                    <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+                      {!selectedImage &&
+                        <div className="space-y-1 text-center">
+                        <svg
+                          className="mx-auto h-12 w-12 text-gray-400"
+                          stroke="currentColor"
+                          fill="none"
+                          viewBox="0 0 48 48"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <div className="flex text-sm text-gray-600">
+                          <label
+                            htmlFor="file-upload"
+                            className="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
+                          >
+                            <span>Upload a file</span>
+                            <input
+                            type="file"
+                            accept='image/*'
+                            onChange={handleFileChange}
+                            id="file-upload" 
+                            name="file-upload" 
+                            className="sr-only" />
+                          </label>
+                          <p className="pl-1">or drag and drop</p>
+                        </div>
+                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                      </div>
+                      }
+                      {selectedImage &&
+                        <div className=''>
+                          <img src={previewImage}/>
+                          <button 
+                          onClick={handleUpload}
+                          className='p-2 mt-1 shadow bg-blue-600 rounded-lg text-white'>
+                            Upload image
+                            </button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                  <button
+                    type="submit"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </>
+    )
+}
+
+export default TournamentForm;
+
+{/* <div>
             <div className='header'>
             <Typography sx={{
                 fontFamily: 'Abril Fatface, cursive',
@@ -180,7 +322,6 @@ const TournamentForm = () => {
                     <TextField sx={{input: {color: '#FCFFF5'}}} variant='standard' label='Name' type='text' required onChange={handleChange} max_length={12} name='name' value={name}/>
                     <TextField multiline variant='standard' label='Description' type='text' required onChange={handleChange} name='description' value={description}/>
                     <TextField multiline variant='standard' label='Rules' type='text' required onChange={handleChange} name='rules' value={rules}/>
-                    {/* <TextField variant='standard' label='Image URL' type='text' required onChange={handleChange} name='image' value={image}/> */}
                     <TextField sx={{width: '150px'}} variant='outlined' label='Max participants' type='number' required onChange={handleChange} name='max_participants' value={max_participants}/>
                     <TextField sx={{width: '150px'}} variant='outlined' label='Registration fee' type='number' required onChange={handleChange} name='registration_fee' value={registration_fee}/>
                     <div className='date-forms'>
@@ -229,8 +370,4 @@ const TournamentForm = () => {
                     <Button disabled={isLoading || isUploading} sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} variant='contained' type='submit'>{`${isLoading ? 'Submitting...' : 'Submit'}`}</Button>
                 </form>
             </div>
-        </div>
-    )
-}
-
-export default TournamentForm;
+        </div> */}
