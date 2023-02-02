@@ -9,8 +9,6 @@ import { StaticRouter } from 'react-router-dom/server';
 import { createDocInCollection, storage } from "../../utils/firebase/firebase.utils";
 import { ref, getDownloadURL, uploadString } from 'firebase/storage';
 
-import './tournament-form.styles.css';
-
 import { useState, useContext } from "react";
 import { UserContext } from '../../contexts/user.context';
 
@@ -46,7 +44,7 @@ const TournamentForm = () => {
     const [selectedImage, setSelectedImage] = useState('');
     const [previewImage, setPreviewImage] = useState('');
     const [resizedImage, setResizedImage] = useState('');
-    const [percent, setPercent] = useState(0);
+    const [isImageUploaded, setIsImageUploaded] = useState(false);
     const navigate = useNavigate();
     const { name, description, rules, registration_fee, max_participants, author } = formFields;
 
@@ -85,7 +83,11 @@ const TournamentForm = () => {
             toast.error('Image is still uploading.');
             return;
         }
-        if(currentUserUID){
+        else if(!isImageUploaded){
+          toast.error('Please upload the image you have selected.');
+          return;
+        }
+        else if(currentUserUID){
             try{
                 setIsLoading(true);
                 await createDocInCollection(formFields, 'tournaments');
@@ -125,6 +127,7 @@ const TournamentForm = () => {
             getDownloadURL(snapshot.ref).then((URL) => {
                 setFormFields({ ...formFields, image: URL})
                 setIsUploading(false);
+                setIsImageUploaded(true);
             })
         }).catch((err) => console.log(err));
     }
@@ -205,7 +208,6 @@ const TournamentForm = () => {
                         rows={3}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="This is a crab-catching tournament for fyshers all over."
-                        defaultValue={''}
                       />
                     </div>
                     <p className="mt-2 text-sm text-gray-500">
@@ -226,7 +228,6 @@ const TournamentForm = () => {
                         rows={3}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="This is a crab-catching tournament for fyshers all over."
-                        defaultValue={''}
                       />
                     </div>
                     <p className="mt-2 text-sm text-gray-500">
@@ -236,7 +237,7 @@ const TournamentForm = () => {
 
                   <div>
                     <label className="block text-md font-medium text-gray-700">Cover photo</label>
-                    <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+                    <div className="mt-1 flex justify-center rounded-md border-2 border-gray-200 px-6 pt-5 pb-6">
                       {!selectedImage &&
                         <div className="space-y-1 text-center">
                         <svg
@@ -256,18 +257,17 @@ const TournamentForm = () => {
                         <div className="flex text-sm text-gray-600">
                           <label
                             htmlFor="file-upload"
-                            className="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500"
+                            className="relative items-center cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500"
                           >
-                            <span>Upload a file</span>
                             <input
                             type="file"
                             accept='image/*'
                             onChange={handleFileChange}
                             id="file-upload" 
-                            name="file-upload" 
-                            className="sr-only" />
+                            name="file-upload"
+                            className='border-2 rounded'
+                            />
                           </label>
-                          <p className="pl-1">or drag and drop</p>
                         </div>
                         <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
                       </div>
