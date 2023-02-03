@@ -8,7 +8,7 @@ import Authentication from './routes/authentication/authentication.component';
 import TournamentForm from './routes/create-new-tournament/create-new-tournament.component';
 import TournamentDetails from './routes/tournament-details/tournament-details.component';
 import SignUp from './routes/authentication/sign-up.component';
-import UserSettings from './routes/user/user-settings.component';
+import UserSettings from './routes/user-settings/user-setttings.component';
 
 import Checkout from './routes/checkout/Checkout';
 

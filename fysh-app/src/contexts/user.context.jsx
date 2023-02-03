@@ -23,6 +23,7 @@ export const UserProvider = ({ children }) => {
             if(user){
                 createUserDocumentFromAuth(user);
                 setCurrentUserUID(user.uid);
+                setCurrentUser(user); //auth  user ref, not user doc
                 let userSnap = getDocInCollection('users', user.uid);
                 userSnap.then((snap) => setCurrentUserName(snap.data().displayName));
             }
