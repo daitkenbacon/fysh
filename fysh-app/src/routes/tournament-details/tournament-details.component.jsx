@@ -142,7 +142,7 @@ const TournamentDetails = () => {
                         {winnerCatch &&
                             <button
                             onClick={() => {handleOpenCatchModal(winnerCatch)}}
-                            className="lg:border-b flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="lg:border-b flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                             >
                                 See Winning Catch!
                             </button>
@@ -150,7 +150,7 @@ const TournamentDetails = () => {
                         {isTournamentOpen && !participants.includes(currentUserUID) &&
                             <button
                             type="submit"
-                            className="lg:border-b flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="lg:border-b flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                             >
                                 Register for Tournament
                             </button>
@@ -197,7 +197,7 @@ const TournamentDetails = () => {
                     <button 
                     disabled={!isTournamentOpen}
                     onClick={handleOpenFormModal}
-                    className="lg:border-b flex items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    className="lg:border-b flex items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                         Submit a Catch
                     </button>
                     }
