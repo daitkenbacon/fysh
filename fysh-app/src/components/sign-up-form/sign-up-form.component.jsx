@@ -1,13 +1,15 @@
 import { useState } from "react";
 import FormInput from "../form-input/form-input.component";
 import {Box, Button, Typography} from '@mui/material';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
+import { LockClosedIcon } from '@heroicons/react/20/solid'
 
 import toast, { Toaster } from 'react-hot-toast';
 
 import './sign-up-form.styles.css';
 
-import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from "../../utils/firebase/firebase.utils";
+import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth, signInWithGooglePopup } from "../../utils/firebase/firebase.utils";
 
 const defaultFormFields = {
         displayName: '',
@@ -24,6 +26,10 @@ const SignUpForm = () => {
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
     };
+
+    const signInWithGoogle = async () => {
+        await signInWithGooglePopup();
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -56,34 +62,115 @@ const SignUpForm = () => {
     };
 
     return (
-        <Box 
-        className='signup-form'
-        sx={{
-            justifyContent: "center",
-            justifyItems: "center",
-            alignItems: "center"
-        }} 
-        >
-            <Toaster />
-            <form onSubmit={handleSubmit}>
-                <div className="header">
-                    <Typography variant="h4">Don't have an account?</Typography>
-                    <Typography variant="subtitle1">Sign up with your email and password:</Typography>
-                </div>
-                <div className='content'>
-                    <FormInput label='Display Name' type='text' required onChange={handleChange} name='displayName' value={displayName}/>
+    <>  
+      <div className="flex min-h-full items-center bg-gray-100 rounded justify-center py-12 px-8 lg:px-80 lg:py-40 shadow">
+        <div className="w-full max-w-md space-y-8">
+          <div>
+            <img
+              className="mx-auto h-12 w-auto"
+              src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=600"
+              alt="Fysh.com"
+            />
+            <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+              Sign up for a Fysh account
+            </h2>
+          </div>
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            <input type="hidden" name="remember" defaultValue="true" />
+            <div className="-space-y-px rounded-md shadow-sm">
+            <div>
+                <label htmlFor="displayName" className="sr-only">
+                  Display Name
+                </label>
+                <input
+                  id="displayName"
+                  name="displayName"
+                  type="displayName"
+                  value={displayName}
+                  onChange={handleChange}
+                  autoComplete="displayName"
+                  required
+                  className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  placeholder="Display name"
+                />
+            </div>
+              <div>
+                <label htmlFor="email" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={handleChange}
+                  autoComplete="email"
+                  required
+                  className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  placeholder="Email address"
+                />
+              </div>
+            </div>
+            <div className="-space-y-px rounded-md shadow-sm">
+              <div>
+                <label htmlFor="password" className="sr-only">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={handleChange}
+                  required
+                  className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  placeholder="Password"
+                />
+              </div>
+              <div>
+                <label htmlFor="confirmPassword" className="sr-only">
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={handleChange}
+                  required
+                  className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  placeholder="Confirm password"
+                />
+              </div>
+            </div>
 
-                    <FormInput label='Email' type='email' required onChange={handleChange} name='email' value={email}/>
+            <div className="text-sm">
+              <Link to='/authentication' className="font-medium text-blue-600 hover:text-blue-500">
+                Already have an account?
+              </Link>
+            </div>
 
-                    <FormInput label='Password' type='password' required onChange={handleChange} name='password' value={password}/>
-
-                    <FormInput label='Confirm Password' type='password' required onChange={handleChange} name='confirmPassword' value={confirmPassword}/>
-                </div>
-                <div className="action">
-                    <Button className="action-button" sx={{mt: 1}} variant="contained" type='submit'>Sign up</Button>
-                </div>
-            </form>
-        </Box>
+            <div>
+              <button
+                type="submit"
+                className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                  <LockClosedIcon className="h-5 w-5 text-blue-500 group-hover:text-blue-400" aria-hidden="true" />
+                </span>
+                Sign Up
+              </button>
+                <button 
+                onClick={signInWithGoogle}
+                className="group mt-1 relative flex w-full justify-center rounded-md border border-transparent bg-azure-500 py-2 px-4 text-sm font-medium text-white hover:bg-azure-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Sign Up with Google
+                </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </> 
     )
 }
 
