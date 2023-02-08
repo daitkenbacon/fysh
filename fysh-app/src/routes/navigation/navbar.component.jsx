@@ -1,11 +1,12 @@
-import { useContext, Fragment, useState } from 'react';
+
+import { useContext, Fragment, useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 import PropTypes from 'prop-types';
-import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
+import { Link as RouterLink, MemoryRouter, Outlet, useLocation } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { UserContext } from '../../contexts/user.context';
@@ -14,33 +15,29 @@ import { signOutUser } from '../../utils/firebase/firebase.utils';
 const Navbar = () => {
 
   const { currentUser, currentUserName, currentUserDoc } = useContext(UserContext);
+  const routerLocation = useLocation();
 
   const signOutHandler = async () => {
     await signOutUser();
   }
 
-  const changeNavFocus = () => {
-    switch(window.location.pathname){
-      case '/tournaments':
-        return 'Tournaments';
-      case '/new-tournament':
-        return 'New';
-      case '/about':
-        return 'About';
-      default:
-        return 'Tournaments';
-    }
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
   }
 
-  function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+  const [navigation, setNavigation] = useState([
+    { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
+    { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
+    { name: 'About', href: 'about', current: (routerLocation.pathname==='/about') },
+  ]);
 
-const [navigation, setNavigation] = useState([
-  { name: 'Tournaments', href: 'tournaments', current: false },
-  { name: 'New', href: 'new-tournament', current: false },
-  { name: 'About', href: 'about', current: false },
-]);
+  useEffect(() => {
+    setNavigation([
+      { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
+      { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
+      { name: 'About', href: 'about', current: (routerLocation.pathname==='/about') },
+    ])
+  }, [routerLocation])
 
   function Router(props) {
     const { children } = props;
@@ -91,16 +88,15 @@ const [navigation, setNavigation] = useState([
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     {navigation.map((item) => {
-                      let isCurrent = item.name===changeNavFocus();
                       return (
                       <RouterLink
                         key={item.name}
                         to={`/${item.href}`}
                         className={classNames(
-                          isCurrent ? 'bg-leaf-900 text-white' : 'text-gray-100 hover:bg-leaf-700 hover:text-white',
+                          item.current ? 'bg-leaf-900 text-white' : 'text-gray-100 hover:bg-leaf-700 hover:text-white',
                           'px-3 py-2 rounded-md text-sm font-medium'
                         )}
-                        aria-current={isCurrent ? 'page' : undefined}
+                        aria-current={item.current ? 'page' : undefined}
                       >
                         {item.name}
                       </RouterLink>
@@ -196,18 +192,21 @@ const [navigation, setNavigation] = useState([
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map((item) => (
-                <Disclosure.Button
+                <RouterLink
                   key={item.name}
-                  as="a"
-                  href={item.href}
-                  className={classNames(
-                    item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                    'block px-3 py-2 rounded-md text-base font-medium'
-                  )}
-                  aria-current={item.current ? 'page' : undefined}
-                >
-                  {item.name}
-                </Disclosure.Button>
+                  to={item.href}>
+                  <Disclosure.Button
+                    key={item.name}
+                    as="a"
+                    className={classNames(
+                      item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                      'block px-3 py-2 rounded-md text-base font-medium'
+                    )}
+                    aria-current={item.current ? 'page' : undefined}
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                </RouterLink>
               ))}
             </div>
           </Disclosure.Panel>
