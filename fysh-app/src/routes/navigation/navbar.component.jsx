@@ -1,56 +1,41 @@
-import { useContext, Fragment, useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { useContext, Fragment, useState, useEffect } from 'react';
 
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 import PropTypes from 'prop-types';
-import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, MemoryRouter, Outlet, useLocation } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { UserContext } from '../../contexts/user.context';
 import { signOutUser } from '../../utils/firebase/firebase.utils';
 
-const pages = ['tournaments', 'new-tournament', 'about'];
-// const settings = ['Profile', 'Account', 'Logout']; Profile & account settings not implemented
-const settings = ['Logout'];
-
 const Navbar = () => {
-  const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
-
-  const navigate = useNavigate();
 
   const { currentUser, currentUserName } = useContext(UserContext);
+  const routerLocation = useLocation();
 
   const signOutHandler = async () => {
-    handleCloseUserMenu();
     await signOutUser();
   }
 
-  const changeNavFocus = () => {
-    switch(window.location.pathname){
-      case '/tournaments':
-        return 'Tournaments';
-      case '/new-tournament':
-        return 'New';
-      case '/about':
-        return 'About';
-      default:
-        return 'Tournaments';
-    }
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
   }
 
-  function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+  const [navigation, setNavigation] = useState([
+    { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
+    { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
+    { name: 'About', href: 'about', current: (routerLocation.pathname==='/about') },
+  ]);
 
-const [navigation, setNavigation] = useState([
-  { name: 'Tournaments', href: 'tournaments', current: false },
-  { name: 'New', href: 'new-tournament', current: false },
-  { name: 'About', href: 'about', current: false },
-]);
+  useEffect(() => {
+    setNavigation([
+      { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
+      { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
+      { name: 'About', href: 'about', current: (routerLocation.pathname==='/about') },
+    ])
+  }, [routerLocation])
 
   function Router(props) {
     const { children } = props;
@@ -63,21 +48,6 @@ const [navigation, setNavigation] = useState([
 
   Router.propTypes = {
     children: PropTypes.node,
-  };
-
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
 
   return (
@@ -100,7 +70,7 @@ const [navigation, setNavigation] = useState([
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <Link to='/'>
+                  <RouterLink to='/'>
                     <img
                       className="block h-8 w-auto lg:hidden"
                       src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
@@ -111,24 +81,23 @@ const [navigation, setNavigation] = useState([
                       src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
                       alt="Your Company"
                     />
-                  </Link>
+                  </RouterLink>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     {navigation.map((item) => {
-                      let isCurrent = item.name===changeNavFocus();
                       return (
-                      <Link
+                      <RouterLink
                         key={item.name}
                         to={`/${item.href}`}
                         className={classNames(
-                          isCurrent ? 'bg-leaf-900 text-white' : 'text-gray-100 hover:bg-leaf-700 hover:text-white',
+                          item.current ? 'bg-leaf-900 text-white' : 'text-gray-100 hover:bg-leaf-700 hover:text-white',
                           'px-3 py-2 rounded-md text-sm font-medium'
                         )}
-                        aria-current={isCurrent ? 'page' : undefined}
+                        aria-current={item.current ? 'page' : undefined}
                       >
                         {item.name}
-                      </Link>
+                      </RouterLink>
                     )})}
                   </div>
                 </div>
@@ -165,33 +134,33 @@ const [navigation, setNavigation] = useState([
                         <div>
                           <Menu.Item>
                           {({ active }) => (
-                            <Link
+                            <RouterLink
                               to='/profile'
                               className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                             >
                               Your Profile
-                            </Link>
+                            </RouterLink>
                           )}
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <Link
+                              <RouterLink
                                 to='/settings'
                                 className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                               >
                                 Settings
-                              </Link>
+                              </RouterLink>
                             )}
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <Link
+                              <RouterLink
                                 to='/'
                                 onClick={() => signOutHandler()}
                                 className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                               >
                                 Sign out
-                              </Link>
+                              </RouterLink>
                             )}
                           </Menu.Item>
                         </div>
@@ -201,12 +170,12 @@ const [navigation, setNavigation] = useState([
                         <div>
                           <Menu.Item>
                             {({ active }) => (
-                              <Link
+                              <RouterLink
                                 to='/authentication'
                                 className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                               >
                                 Sign in
-                              </Link>
+                              </RouterLink>
                             )}
                           </Menu.Item>
                         </div>
@@ -221,7 +190,9 @@ const [navigation, setNavigation] = useState([
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map((item) => (
-                <Link to={item.href}>
+                <RouterLink
+                  key={item.name}
+                  to={item.href}>
                   <Disclosure.Button
                     key={item.name}
                     as="a"
@@ -233,7 +204,7 @@ const [navigation, setNavigation] = useState([
                   >
                     {item.name}
                   </Disclosure.Button>
-                </Link>
+                </RouterLink>
               ))}
             </div>
           </Disclosure.Panel>
