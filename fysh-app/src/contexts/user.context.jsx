@@ -8,12 +8,14 @@ export const UserContext = createContext({
     currentUserUID: null,
     setCurrentUser: () => null,
     currentUserName: null,
+    currentUserDoc: null,
     users: [],
     getUser: (id) => null,
 });
 
 export const UserProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
+    const [currentUserDoc, setCurrentUserDoc] = useState(null);
     const [currentUserUID, setCurrentUserUID] = useState('');
     const [currentUserName, setCurrentUserName] = useState('');
     const [users, setUsers] = useState([]);
@@ -25,7 +27,10 @@ export const UserProvider = ({ children }) => {
                 setCurrentUserUID(user.uid);
                 setCurrentUser(user); //auth  user ref, not user doc
                 let userSnap = getDocInCollection('users', user.uid);
-                userSnap.then((snap) => setCurrentUserName(snap.data().displayName));
+                userSnap.then((snap) => {
+                    setCurrentUserName(snap.data().displayName);
+                    setCurrentUserDoc(snap.data());
+                });
             }
             setCurrentUser(user); //listener either returns null or a user, whether logged in, signing out, or default. Can set it here since listener is active to help performance
         })
@@ -47,6 +52,6 @@ export const UserProvider = ({ children }) => {
         }
     }
     
-    const value = { currentUser, setCurrentUser, currentUserUID, currentUserName, users, getUser }
+    const value = { currentUser, setCurrentUser, currentUserUID, currentUserName, currentUserDoc, users, getUser }
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }

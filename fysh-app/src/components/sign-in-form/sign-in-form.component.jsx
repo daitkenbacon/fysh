@@ -1,7 +1,4 @@
 import { useState, useContext } from "react";
-import './sign-in.styles.css'
-
-import {Button, Box, TextField, Typography} from '@mui/material';
 
 import { signInAuthUserWithEmailAndPassword, signInWithGooglePopup } from "../../utils/firebase/firebase.utils";
 
@@ -13,7 +10,7 @@ import { StaticRouter } from 'react-router-dom/server';
 
 import { UserContext } from "../../contexts/user.context";
 
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import { useEffect } from "react";
 
 const defaultFormFields = {
@@ -87,6 +84,7 @@ const SignInForm = () => {
 
     return (
     <>
+      <Toaster />
       <div className="flex min-h-full items-center bg-gray-100 rounded justify-center py-12 px-8 lg:px-80 lg:py-40 shadow">
         <div className="w-full max-w-md space-y-8">
           <div>
