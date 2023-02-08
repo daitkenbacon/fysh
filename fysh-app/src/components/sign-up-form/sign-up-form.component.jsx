@@ -1,13 +1,9 @@
 import { useState } from "react";
-import FormInput from "../form-input/form-input.component";
-import {Box, Button, Typography} from '@mui/material';
 import { useNavigate, Link } from "react-router-dom";
 
 import { LockClosedIcon } from '@heroicons/react/20/solid'
 
-import toast, { Toaster } from 'react-hot-toast';
-
-import './sign-up-form.styles.css';
+import { Toaster, toast } from 'react-hot-toast';
 
 import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth, signInWithGooglePopup } from "../../utils/firebase/firebase.utils";
 
@@ -16,6 +12,8 @@ const defaultFormFields = {
         email: '',
         password: '',
         confirmPassword: '',
+        bio: 'I love to fysh!',
+        profilePicture: 'https://firebasestorage.googleapis.com/v0/b/fysh-poc-db.appspot.com/o/users%2Ffysher.png?alt=media&token=19096cde-d632-4ae8-afa8-a46540c365a0',
     }
 
 const SignUpForm = () => {
@@ -35,7 +33,7 @@ const SignUpForm = () => {
         event.preventDefault();
 
         if (password !== confirmPassword) {
-            toast('passwords do not match');
+            toast.error('passwords do not match');
             return;
         }
 
@@ -49,7 +47,7 @@ const SignUpForm = () => {
             if (error.code === 'auth/email-already-in-use') {
                 toast('Cannot create user, email already in use');
         } else {
-            toast('Could not register user: ', error);
+            toast.error('Could not register user: ', error);
             console.error(error);
         }
         }
@@ -63,6 +61,7 @@ const SignUpForm = () => {
 
     return (
     <>  
+      <Toaster/>
       <div className="flex min-h-full items-center bg-gray-100 rounded justify-center py-12 px-8 lg:px-80 lg:py-40 shadow">
         <div className="w-full max-w-md space-y-8">
           <div>

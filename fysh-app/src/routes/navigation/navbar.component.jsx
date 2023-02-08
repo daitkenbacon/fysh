@@ -1,4 +1,6 @@
+
 import { useContext, Fragment, useState, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -12,7 +14,7 @@ import { signOutUser } from '../../utils/firebase/firebase.utils';
 
 const Navbar = () => {
 
-  const { currentUser, currentUserName } = useContext(UserContext);
+  const { currentUser, currentUserName, currentUserDoc } = useContext(UserContext);
   const routerLocation = useLocation();
 
   const signOutHandler = async () => {
@@ -74,12 +76,12 @@ const Navbar = () => {
                     <img
                       className="block h-8 w-auto lg:hidden"
                       src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
-                      alt="Your Company"
+                      alt="Fysh logo"
                     />
                     <img
                       className="hidden h-8 w-auto lg:block"
                       src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
-                      alt="Your Company"
+                      alt="Fysh logo"
                     />
                   </RouterLink>
                 </div>
@@ -114,8 +116,8 @@ const Navbar = () => {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
+                        src={`${currentUserDoc ? currentUserDoc.profilePicture : 'https://firebasestorage.googleapis.com/v0/b/fysh-poc-db.appspot.com/o/users%2Ffysher.png?alt=media&token=19096cde-d632-4ae8-afa8-a46540c365a0'}`}
+                        alt="Avatar preview"
                       />
                     </Menu.Button>
                   </div>
@@ -145,7 +147,7 @@ const Navbar = () => {
                           <Menu.Item>
                             {({ active }) => (
                               <RouterLink
-                                to='/settings'
+                                to='/account'
                                 className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                               >
                                 Settings

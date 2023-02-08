@@ -157,9 +157,6 @@ const TournamentForm = () => {
         }
     }
 
-    const [startValue, setStartValue] = useState(null);
-    const [endValue, setEndValue] = useState(null);
-
     return (
     <>
       <div className='lg: pt-20 p-5 max-w-screen-xl mx-auto'>
@@ -173,7 +170,7 @@ const TournamentForm = () => {
             </div>
           </div>
           <div className="mt-5 md:col-span-2 md:mt-0">
-            <form action="#" method="POST">
+            <form onSubmit={handleSubmit}>
               <div className="shadow sm:overflow-hidden sm:rounded-md">
                 <div className="space-y-6 bg-white px-4 py-5 sm:p-6">
                   <div className="grid grid-cols-3 gap-6">
