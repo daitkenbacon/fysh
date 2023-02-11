@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { useEffect, useState, useContext } from 'react';
 
-import { getDocInCollection, updateDocInCollection } from '../../utils/firebase/firebase.utils';
+import { updateDocInCollection } from '../../utils/firebase/firebase.utils';
 
 import { CalendarDaysIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 
 import { UserContext } from '../../contexts/user.context';
 
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { TournamentsContext } from '../../contexts/tournaments.context';
 
 const TournamentCard = ({tournament}) => {
   const {
@@ -31,6 +32,7 @@ const TournamentCard = ({tournament}) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [canRegister, setCanRegister] = useState(true);
   const { currentUserUID, getUser, users } = useContext(UserContext);
+  const { getTournament } = useContext(TournamentsContext);
   const [isLoading, setIsLoading] = useState(true);
 
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
@@ -67,8 +69,8 @@ const TournamentCard = ({tournament}) => {
       return;
     }
     try {
-      const tournamentDoc = await getDocInCollection('tournaments', id);
-      const participantsQuery = tournamentDoc.data().participants;
+      const tournamentDoc = getTournament(id);
+      const participantsQuery = tournamentDoc.participants;
         if(participantsQuery.length >= max_participants){
           toast.error('Tournament is full.');
           setIsRegistering(false);

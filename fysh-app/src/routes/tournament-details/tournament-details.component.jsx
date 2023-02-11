@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom"
 import './tournament-details.styles.scss';
 import { UserContext } from '../../contexts/user.context';
 
-import { getDocInCollection, updateDocInCollection, deleteDocInCollection } from "../../utils/firebase/firebase.utils";
+import { updateDocInCollection, deleteDocInCollection } from "../../utils/firebase/firebase.utils";
 
 import { CalendarDaysIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 import { ClockIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';

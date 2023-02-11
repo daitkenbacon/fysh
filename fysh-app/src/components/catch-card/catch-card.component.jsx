@@ -1,5 +1,3 @@
-import './catch-card.styles.scss';
-import { getDocInCollection } from '../../utils/firebase/firebase.utils';
 import { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../../contexts/user.context';
 import { TournamentsContext } from '../../contexts/tournaments.context';
@@ -18,7 +16,7 @@ const defaultCatch = {
 const CatchCard = (props) => {
     const [catchItem, setCatchItem] = useState(defaultCatch);
     const [isCatchOwner, setIsCatchOwner] = useState(false);
-    const { currentUserUID } = useContext(UserContext);
+    const { currentUserUID, getUser } = useContext(UserContext);
     const { getCatch, catches } = useContext(TournamentsContext);
     const {isHost, declareWinner, isOpen, removeSubmission, submission, openModal } = props;
     const [catchDate, setCatchDate] = useState('');
@@ -41,19 +39,13 @@ const CatchCard = (props) => {
     }, [catches])
 
     useEffect(() => {
-        async function getUserData() {
-            if(!catchItem.author) {
-                return;
-            }
-            try {
-                await getDocInCollection('users', catchItem.author)
-                .then((user) => setUserName(user.data().displayName));
-            } catch(err) {
-                console.error(err);
-            }
+        function getUserData() {
+            let authorUser = getUser(catchItem.author)
+            setUserName(authorUser.displayName);
         }
-
-        getUserData();
+        if(catchItem.author){
+            getUserData();
+        }
     }, [catchItem])
 
     return (
