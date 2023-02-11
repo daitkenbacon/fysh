@@ -1,15 +1,9 @@
 import './tournament-list.styles.css'
 
 import TournamentCard from '../../components/tournament-card/tournament-card.component';
-import { Button, TextField, Typography, CircularProgress } from '@mui/material';
-
-import PropTypes from 'prop-types';
-import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
-import { StaticRouter } from 'react-router-dom/server';
 
 import { Toaster } from 'react-hot-toast';
 
-import { getDocsInCollection, getDocInCollection } from '../../utils/firebase/firebase.utils';
 import { useEffect, useState, useContext } from 'react';
 import { TournamentsContext } from '../../contexts/tournaments.context';
 

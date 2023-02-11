@@ -45,7 +45,7 @@ export const UserProvider = ({ children }) => {
 
     const getUser = (id) => {
         if(users){
-            return users.find(u => u.uid === id);
+            return users.find(user => user.id === id);
         }
         else{
             return null;

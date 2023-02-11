@@ -3,14 +3,13 @@ import { useEffect, useState, useContext } from 'react';
 
 import { getDocInCollection, updateDocInCollection } from '../../utils/firebase/firebase.utils';
 
-import './tournament-card.styles.css'
 import { CalendarDaysIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 
 import { UserContext } from '../../contexts/user.context';
 
 import { toast, Toaster } from 'react-hot-toast';
 
-import { Link, Link as RouterLink, MemoryRouter } from 'react-router-dom';
+import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 const TournamentCard = ({tournament}) => {
@@ -31,7 +30,7 @@ const TournamentCard = ({tournament}) => {
   const [userName, setUserName] = useState('Fysher');
   const [isRegistering, setIsRegistering] = useState(false);
   const [canRegister, setCanRegister] = useState(true);
-  const { currentUserUID, currentUser } = useContext(UserContext);
+  const { currentUserUID, getUser, users } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(true);
 
   const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
@@ -39,8 +38,8 @@ const TournamentCard = ({tournament}) => {
 
   useEffect(() => {
           async function getUserData() {
-              const user = await getDocInCollection('users', author);
-              setUserName(user.data().displayName);
+              const user = getUser(author);
+              setUserName(user.displayName);
               if(participants.includes(currentUserUID)) {
                 setCanRegister(false);
               } else if(participants.length >= max_participants) {
@@ -49,7 +48,7 @@ const TournamentCard = ({tournament}) => {
               
               setIsLoading(false);
             }
-          if(author){
+          if(author && users){
             getUserData();
           }
       }, [author])
@@ -106,9 +105,9 @@ const TournamentCard = ({tournament}) => {
       </div>
       <div className='hidden gap-4 flex-col group-hover:flex absolute font-bold top-1/4 left-1/2 -translate-x-1/2 text-center'>
           <button className='bg-white text-xl p-1 rounded-md shadow hover:bg-gray-300 transition-colors hover:shadow-md'>
-            <Link to={`/tournament/${id}`}>
+            <RouterLink to={`/tournament/${id}`}>
               Details
-            </Link>
+            </RouterLink>
           </button>
           <button 
             disabled={!canRegister} 
@@ -122,9 +121,9 @@ const TournamentCard = ({tournament}) => {
       <div className="mt-4 flex justify-between">
         <div>
           <h3 className="text-sm font-bold text-gray-700 mr-1">
-            <Link to={`/tournament/${id}`}>
+            <RouterLink to={`/tournament/${id}`}>
               {name}
-            </Link>
+            </RouterLink>
           </h3>
         </div>
         <div className='flex gap-2 flex-row'>
