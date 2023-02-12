@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useRef } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom"
 
 import './tournament-details.styles.scss';
@@ -15,19 +15,6 @@ import CatchCard from '../../components/catch-card/catch-card.component';
 import { deleteField } from "firebase/firestore";
 import { TournamentsContext } from "../../contexts/tournaments.context";
 
-const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: '#193441',
-    border: '2px solid white',
-    boxShadow: 24,
-    p: 4,
-};
-
-
 const TournamentDetails = () => {
     const { currentUserUID } = useContext(UserContext);
     const { tournaments, getTournament, getCatch } = useContext(TournamentsContext);
@@ -38,7 +25,6 @@ const TournamentDetails = () => {
 
     const [startDate, setStartDate] = useState('');
     const [winnerCatch, setWinnerCatch] = useState('');
-    const [endDate, setEndDate] = useState('');
 
     const [daysOpen, setDaysOpen] = useState(1);
 
@@ -57,7 +43,6 @@ const TournamentDetails = () => {
             setOpenFormModal(true);
         }
     }
-    const handleCloseFormModal = () => setOpenFormModal(false);
 
     const handleOpenCatchModal = (catchItem) => {
         if(catchItem){
@@ -74,7 +59,6 @@ const TournamentDetails = () => {
             const t = getTournament(id);
             setTournament(t);
             setStartDate(new Date(t.start_date.seconds * 1000).toLocaleDateString('en-US'));
-            setEndDate(new Date(t.end_date.seconds * 1000).toLocaleDateString('en-US'));
             setisHost(t.author===currentUserUID);
             setIsTournamentOpen(t.isOpen);
 
@@ -253,7 +237,7 @@ const TournamentDetails = () => {
                             <div className="relative transform pt-1 overflow-hidden rounded-lg bg-white text-center shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                 {selectedCatch.description}
                                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                    <img className="w-full rounded-t" src={selectedCatch.img}/>
+                                    <img alt='Selected catch' className="w-full rounded-t" src={selectedCatch.img}/>
                                                 <button className="p-3 text-white hover:bg-red-600 font-bold w-full bg-red-500 rounded-b" onClick={handleCloseCatchModal}>
                                                     Close
                                                 </button>
