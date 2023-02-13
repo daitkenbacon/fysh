@@ -39,11 +39,12 @@ const TournamentCard = ({tournament}) => {
 
   const getDateColor = () => {
     let start = new Date(start_date.seconds * 1000);
+    let end = new Date(end_date.seconds * 1000);
     switch (true) {
       case (start < currentDate):
-        return 'bg-red-600'
-      case (start > currentDate):
-        return 'bg-red-600'
+        return 'bg-red-600 text-white'
+      case (start > currentDate && end > currentDate):
+        return 'bg-green-600 text-white'
     }
   }
 
@@ -142,7 +143,7 @@ const TournamentCard = ({tournament}) => {
             </RouterLink>
           </h3>
         </div>
-        <div className={`${participants.length===max_participants ? 'bg-red-600 p-1 rounded' : ''}flex gap-2 flex-row`}>
+        <div className={`${participants.length===max_participants ? 'bg-red-600 p-1 rounded text-white' : ''}flex gap-2 flex-row`}>
           <UserGroupIcon className='h-5 w-5' aria-hidden='true'/>
           <p className="text-sm font-medium text-gray-900">
             {participants ? participants.length : '0'}/{max_participants}
@@ -152,7 +153,7 @@ const TournamentCard = ({tournament}) => {
       <div className='flex gap-2 flex-row justify-between rounded p-1'>
         <div className={`${getDateColor()} rounded p-1 flex flex-row gap-2`}>
           <CalendarDaysIcon className='h-5 w-5' aria-hidden='true'/>
-          <p className="text-sm font-medium text-gray-900">{new_start_date}</p>
+          <p className="text-sm font-medium">{new_start_date}</p>
         </div>
         <div className='flex flex-row gap-2 justify-center content-center'>
           <ClockIcon className='h-5 w-5 ' aria-hidden='true' />
