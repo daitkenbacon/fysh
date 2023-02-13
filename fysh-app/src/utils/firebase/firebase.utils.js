@@ -151,12 +151,15 @@ export const getDocsInCollection = async (collectionToGetFrom) => {
   try {
     const colRef = collection(db, collectionToGetFrom);
     const docsSnap = await getDocs(colRef);
-    const tournaments = [];
+    const docsArr = [];
     docsSnap.docs.forEach((doc) => {
-      tournaments.push(doc.data());
+      docsArr.push({
+        ...doc.data(),
+        id: doc.id,
+      });
     })
 
-    return tournaments;
+    return docsArr;
 
   } catch(error) {
     console.error(error);

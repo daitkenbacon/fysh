@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { useEffect, useState, useContext } from 'react';
 
-import { getDocInCollection, updateDocInCollection } from '../../utils/firebase/firebase.utils';
+import { updateDocInCollection } from '../../utils/firebase/firebase.utils';
 
-import './tournament-card.styles.css'
 import { CalendarDaysIcon, UserGroupIcon } from '@heroicons/react/24/solid';
+import { ClockIcon } from '@heroicons/react/24/outline';
 
 import { UserContext } from '../../contexts/user.context';
 
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
-import { Link, Link as RouterLink, MemoryRouter } from 'react-router-dom';
+import { Link as RouterLink, MemoryRouter } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { TournamentsContext } from '../../contexts/tournaments.context';
 
 const TournamentCard = ({tournament}) => {
   const {
@@ -28,31 +29,46 @@ const TournamentCard = ({tournament}) => {
   } = tournament;
 
   const navigate = useNavigate();
-  const [userName, setUserName] = useState('Fysher');
   const [isRegistering, setIsRegistering] = useState(false);
   const [canRegister, setCanRegister] = useState(true);
-  const { currentUserUID, currentUser } = useContext(UserContext);
+  const { currentUserUID, getUser, users } = useContext(UserContext);
+  const { getTournament } = useContext(TournamentsContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [daysOpen, setDaysOpen] = useState(0);
+  const currentDate = new Date();
 
-  const new_end_date = new Date(end_date.seconds * 1000).toLocaleDateString('en-US');
-  const new_start_date = new Date(start_date.seconds * 1000).toLocaleDateString('en-US');;
+  const getDateColor = () => {
+    let start = new Date(start_date.seconds * 1000);
+    let end = new Date(end_date.seconds * 1000);
+    switch (true) {
+      case (start < currentDate):
+        return 'bg-red-600 text-white'
+      case (start > currentDate && end > currentDate):
+        return 'bg-green-600 text-white'
+    }
+  }
+
+  const new_start_date = new Date(start_date.seconds * 1000).toLocaleDateString('en-US');
 
   useEffect(() => {
-          async function getUserData() {
-              const user = await getDocInCollection('users', author);
-              setUserName(user.data().displayName);
-              if(participants.includes(currentUserUID)) {
-                setCanRegister(false);
-              } else if(participants.length >= max_participants) {
-                setCanRegister(false);
-              }
-              
-              setIsLoading(false);
-            }
-          if(author){
-            getUserData();
-          }
-      }, [author])
+    async function getUserData() {
+      if(participants.includes(currentUserUID)) {
+        setCanRegister(false);
+      } else if(participants.length >= max_participants) {
+        setCanRegister(false);
+      }
+
+      var d1 = new Date(start_date.seconds * 1000);
+      var d2 = new Date(end_date.seconds * 1000)
+      var timeDiff = d2.getTime() - d1.getTime();
+      setDaysOpen((timeDiff * 1000 * 3600 * 24) + 1); //If start/end are the same, tournament is open for one day.
+        
+      setIsLoading(false);
+      }
+    if(author && users){
+      getUserData();
+    }
+  }, [author, tournament])
 
   const delay = (millisec) => {
     return new Promise(resolve => {
@@ -68,8 +84,8 @@ const TournamentCard = ({tournament}) => {
       return;
     }
     try {
-      const tournamentDoc = await getDocInCollection('tournaments', id);
-      const participantsQuery = tournamentDoc.data().participants;
+      const tournamentDoc = getTournament(id);
+      const participantsQuery = tournamentDoc.participants;
         if(participantsQuery.length >= max_participants){
           toast.error('Tournament is full.');
           setIsRegistering(false);
@@ -106,12 +122,12 @@ const TournamentCard = ({tournament}) => {
       </div>
       <div className='hidden gap-4 flex-col group-hover:flex absolute font-bold top-1/4 left-1/2 -translate-x-1/2 text-center'>
           <button className='bg-white text-xl p-1 rounded-md shadow hover:bg-gray-300 transition-colors hover:shadow-md'>
-            <Link to={`/tournament/${id}`}>
+            <RouterLink to={`/tournament/${id}`}>
               Details
-            </Link>
+            </RouterLink>
           </button>
           <button 
-            disabled={!canRegister} 
+            disabled={!canRegister || isRegistering} 
             onClick={() => handleRegister()} 
             className={`${canRegister ? 'bg-green-500 text-white hover:bg-green-600 hover:shadow-md transition-colors' : 'bg-gray-500 text-white'} p-1 text-xl rounded-md shadow`}>
               {participants &&
@@ -122,83 +138,30 @@ const TournamentCard = ({tournament}) => {
       <div className="mt-4 flex justify-between">
         <div>
           <h3 className="text-sm font-bold text-gray-700 mr-1">
-            <Link to={`/tournament/${id}`}>
+            <RouterLink to={`/tournament/${id}`}>
               {name}
-            </Link>
+            </RouterLink>
           </h3>
         </div>
-        <div className='flex gap-2 flex-row'>
+        <div className={`${participants.length===max_participants ? 'bg-red-600 p-1 rounded text-white' : ''}flex gap-2 flex-row`}>
           <UserGroupIcon className='h-5 w-5' aria-hidden='true'/>
           <p className="text-sm font-medium text-gray-900">
             {participants ? participants.length : '0'}/{max_participants}
           </p>
         </div>
       </div>
-      <div className='flex gap-2 flex-row justify-between'>
-        <div className='flex flex-row gap-2'>
+      <div className='flex gap-2 flex-row justify-between rounded p-1'>
+        <div className={`${getDateColor()} rounded p-1 flex flex-row gap-2`}>
           <CalendarDaysIcon className='h-5 w-5' aria-hidden='true'/>
-          <p className="text-sm font-medium text-gray-900">{new_start_date}</p>
+          <p className="text-sm font-medium">{new_start_date}</p>
         </div>
-          <p className="text-sm font-medium text-gray-900">-</p>
-          <p className="text-sm font-medium text-gray-900">{new_end_date}</p>
+        <div className='flex flex-row gap-2 justify-center content-center'>
+          <ClockIcon className='h-5 w-5 ' aria-hidden='true' />
+          <p className="text-sm font-medium text-gray-900 justify-center content-center">{daysOpen} Day{daysOpen > 1 ? 's' : ''}</p>
         </div>
+      </div>
     </div>
   );
 }
 
 export default TournamentCard;
-
-    // <Card 
-    //     className='card-container'
-    //     sx={{ 
-    //     width: 325,
-    //     borderRadius: 2,
-    //     margin: 2,
-    //     minWidth: 50,
-    //     backgroundColor: '#193441',
-    //     boxShadow: '3px 3px 10px'
-    //      }}>
-    //        <Toaster />
-    //   <CardMedia
-    //     component="img"
-    //     height="160"
-    //     image={image}
-    //     alt={name}
-    //   />
-    //   <CardContent 
-    //     className='card-content'
-    //     sx={{
-    //     color: '#d1dbbd;'
-    //   }}>
-    //     <Typography gutterBottom variant="h5" component="div">
-    //       {name}
-    //     </Typography>
-    //     <Typography variant="body2" color="#FFFFFF">
-    //       {description.substring(0, 120)}
-    //       {description.length > 100 && '...'}
-    //     </Typography>
-    //     <Typography variant='body2' color="#b3b3b3">Hosted by {userName}</Typography>
-    //     <div className='card-info'>
-    //       <div className='date-info'>
-    //         <CalendarMonthIcon />
-    //         <Typography variant='subtitle1'>{new_end_date}</Typography>
-    //       </div>
-    //       <div className='participants-info'>
-    //         <Typography>{participants ? participants.length : '0'}/{max_participants}</Typography> 
-    //         <GroupsIcon/>
-    //       </div>
-    //     </div>
-    //   </CardContent>
-    //   <CardActions className='card-buttons'>
-    //     <Button onClick={() => navigate(`/tournament/${tournament.id}`, tournament.id)} sx={{color: '#FCFFF5'}} size="small">Details</Button>
-    //             <Button 
-    //     disabled={(!(participants && participants.length < max_participants) || participants.includes(currentUserUID))} onClick={() => handleRegister()} 
-    //     sx={{backgroundColor: '#3E606F'}} 
-    //     variant='contained' 
-    //     size="small"
-    //     >
-    //         {participants &&
-    //         participants.includes(currentUserUID) ? 'Registered' : `$${registration_fee} Register`}
-    //     </Button>
-    //   </CardActions>
-    // </Card>
