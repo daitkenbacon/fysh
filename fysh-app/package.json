@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chakra-ui/react": "^2.4.9",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fontsource/roboto": "^4.5.8",
@@ -23,6 +24,7 @@
     "react-image-file-resizer": "^0.4.8",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
+    "recharts": "^2.4.1",
     "sass": "^1.56.0",
     "web-vitals": "^2.1.4"
   },

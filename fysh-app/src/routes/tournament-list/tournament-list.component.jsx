@@ -1,5 +1,3 @@
-import './tournament-list.styles.css'
-
 import TournamentCard from '../../components/tournament-card/tournament-card.component';
 
 import { Toaster } from 'react-hot-toast';

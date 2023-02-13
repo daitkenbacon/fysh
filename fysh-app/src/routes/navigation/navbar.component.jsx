@@ -27,14 +27,14 @@ const Navbar = () => {
   const [navigation, setNavigation] = useState([
     { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
     { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
-    { name: 'About', href: 'about', current: (routerLocation.pathname==='/about') },
+    { name: 'Dashboard', href: 'dashboard', current: (routerLocation.pathname==='/dashboard') },
   ]);
 
   useEffect(() => {
     setNavigation([
       { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
       { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
-      { name: 'About', href: 'about', current: (routerLocation.pathname==='/about') },
+      { name: 'Dashboard', href: 'dashboard', current: (routerLocation.pathname==='/dashboard') },
     ])
   }, [routerLocation])
 

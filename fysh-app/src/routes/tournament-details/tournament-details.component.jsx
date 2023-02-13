@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom"
 
-import './tournament-details.styles.scss';
 import { UserContext } from '../../contexts/user.context';
 
 import { updateDocInCollection, deleteDocInCollection } from "../../utils/firebase/firebase.utils";
