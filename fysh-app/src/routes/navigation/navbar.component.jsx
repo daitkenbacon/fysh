@@ -25,16 +25,16 @@ const Navbar = () => {
   }
 
   const [navigation, setNavigation] = useState([
+    { name: 'Dashboard', href: 'dashboard', current: (routerLocation.pathname==='/dashboard') },
     { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
     { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
-    { name: 'About', href: 'about', current: (routerLocation.pathname==='/about') },
   ]);
 
   useEffect(() => {
     setNavigation([
+      { name: 'Dashboard', href: 'dashboard', current: (routerLocation.pathname==='/dashboard') },
       { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
       { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
-      { name: 'About', href: 'about', current: (routerLocation.pathname==='/about') },
     ])
   }, [routerLocation])
 
@@ -134,16 +134,6 @@ const Navbar = () => {
                       {currentUser &&
                         <div>
                           <Menu.Item>
-                          {({ active }) => (
-                            <RouterLink
-                              to='/profile'
-                              className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                            >
-                              Your Profile
-                            </RouterLink>
-                          )}
-                          </Menu.Item>
-                          <Menu.Item>
                             {({ active }) => (
                               <RouterLink
                                 to='/account'
@@ -196,7 +186,7 @@ const Navbar = () => {
                   to={item.href}>
                   <Disclosure.Button
                     key={item.name}
-                    as="a"
+                    as="div"
                     className={classNames(
                       item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                       'block px-3 py-2 rounded-md text-base font-medium'
