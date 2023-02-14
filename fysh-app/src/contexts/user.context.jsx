@@ -26,7 +26,7 @@ export const UserProvider = ({ children }) => {
     const [ upcomingTournaments, setUpcomingTournaments ] = useState([]);
     const [ currentTournament, setCurrentTournament ] = useState(null);
 
-    const { tournaments } = useContext(TournamentsContext);
+    const { tournaments, getCatch, catches } = useContext(TournamentsContext);
     
     useEffect(() => {
         const unsubscribe = onAuthStateChangedListener((user) => { //cleanup at end of stream
@@ -64,15 +64,22 @@ export const UserProvider = ({ children }) => {
             if(sortedTourns && (sortedTourns.length > 0)){
                 let currentTourn = sortedTourns.filter((tournament) => ((today >= (new Date(tournament.start_date.seconds * 1000))) && (today <= (new Date(tournament.end_date.seconds * 1000)))))
                 if(currentTourn){
-                    setCurrentTournament(currentTourn[0]);
+                    let userCatches = currentTourn[0].catches.filter((c) => {
+                        let catchDoc = getCatch(c);
+                        if(catchDoc){
+                            return (catchDoc.author===currentUserUID);
+                        } else {
+                            return false;
+                        }
+                    });
+                    setCurrentTournament({...currentTourn[0], catches: userCatches});
                 } else {
                     setCurrentTournament(null);
                 }
-                console.log(currentTourn);
             }
         }
         // eslint-disable-next-line
-    }, [tournaments, currentUserUID])
+    }, [tournaments, currentUserUID, catches])
 
     const getUser = (id) => {
         if(users){
