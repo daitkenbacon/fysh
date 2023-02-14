@@ -11,6 +11,8 @@ export const UserContext = createContext({
     currentUserDoc: null,
     users: [],
     getUser: (id) => null,
+    currentTournament: null,
+    upcomingTournaments: [],
 });
 
 export const UserProvider = ({ children }) => {
