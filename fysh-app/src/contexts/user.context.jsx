@@ -1,6 +1,7 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 
 import { onAuthStateChangedListener, createUserDocumentFromAuth, getDocInCollection, getDocsInCollection } from '../utils/firebase/firebase.utils';
+import { TournamentsContext } from './tournaments.context';
 
 //actual value i want to access
 export const UserContext = createContext({
@@ -21,6 +22,11 @@ export const UserProvider = ({ children }) => {
     const [currentUserUID, setCurrentUserUID] = useState('');
     const [currentUserName, setCurrentUserName] = useState('');
     const [users, setUsers] = useState([]);
+
+    const [ upcomingTournaments, setUpcomingTournaments ] = useState([]);
+    const [ currentTournament, setCurrentTournament ] = useState(null);
+
+    const { tournaments } = useContext(TournamentsContext);
     
     useEffect(() => {
         const unsubscribe = onAuthStateChangedListener((user) => { //cleanup at end of stream
@@ -45,6 +51,29 @@ export const UserProvider = ({ children }) => {
         return unsubscribe; //stop listening when unmounted
     }, [])
 
+    useEffect(() => {
+        const today = new Date();
+        if(tournaments){
+            let userTourns = tournaments.filter((tournament) => 
+                tournament.participants.includes(currentUserUID)); //If any tournaments' participants includes user, add them to array.
+            let activeTourns = userTourns.filter((tournament) => ((new Date(tournament.end_date.seconds * 1000)) >= today)) //Only tournaments that haven't ended yet.
+            let sortedTourns = activeTourns.sort((a, b) => a.start_date - b.start_date);
+            setUpcomingTournaments(sortedTourns); 
+        
+
+            if(sortedTourns && (sortedTourns.length > 0)){
+                let currentTourn = sortedTourns.filter((tournament) => ((today >= (new Date(tournament.start_date.seconds * 1000))) && (today <= (new Date(tournament.end_date.seconds * 1000)))))
+                if(currentTourn){
+                    setCurrentTournament(currentTourn[0]);
+                } else {
+                    setCurrentTournament(null);
+                }
+                console.log(currentTourn);
+            }
+        }
+        // eslint-disable-next-line
+    }, [tournaments, currentUserUID])
+
     const getUser = (id) => {
         if(users){
             return users.find(user => user.id === id);
@@ -54,6 +83,6 @@ export const UserProvider = ({ children }) => {
         }
     }
     
-    const value = { currentUser, setCurrentUser, currentUserUID, currentUserName, currentUserDoc, users, getUser }
+    const value = { currentUser, setCurrentUser, currentUserUID, currentUserName, currentUserDoc, users, getUser, currentTournament, upcomingTournaments }
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }

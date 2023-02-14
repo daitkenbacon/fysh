@@ -61,7 +61,7 @@ const TournamentCard = ({tournament}) => {
       var d1 = new Date(start_date.seconds * 1000);
       var d2 = new Date(end_date.seconds * 1000)
       var timeDiff = d2.getTime() - d1.getTime();
-      setDaysOpen((timeDiff * 1000 * 3600 * 24) + 1); //If start/end are the same, tournament is open for one day.
+      setDaysOpen(Math.ceil((timeDiff / (1000 * 3600 * 24)) + 1)); //If start/end are the same, tournament is open for one day.
         
       setIsLoading(false);
       }

@@ -66,7 +66,7 @@ const TournamentDetails = () => {
 
             var timeDiff = d2.getTime() - d1.getTime();
 
-            setDaysOpen((timeDiff * 1000 * 3600 * 24) + 1);
+            setDaysOpen(Math.ceil((timeDiff / (1000 * 3600 * 24)) + 1));
         }
     }, [tournaments])
 
