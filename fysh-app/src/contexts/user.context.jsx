@@ -63,7 +63,7 @@ export const UserProvider = ({ children }) => {
 
             if(sortedTourns && (sortedTourns.length > 0)){
                 let currentTourn = sortedTourns.filter((tournament) => ((today >= (new Date(tournament.start_date.seconds * 1000))) && (today <= (new Date(tournament.end_date.seconds * 1000)))))
-                if(currentTourn){
+                if(currentTourn[0]){
                     let userCatches = currentTourn[0].catches.filter((c) => {
                         let catchDoc = getCatch(c);
                         if(catchDoc){
