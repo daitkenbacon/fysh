@@ -10,8 +10,9 @@ import SignUp from './routes/authentication/sign-up.component';
 import UserSettings from './routes/user-settings/user-setttings.component';
 import PageNotFound from './routes/404/404.component';
 
-import Checkout from './routes/checkout/Checkout';
 import DashboardPage from './routes/dashboard/dashboard.component';
+
+import PrivateRoute from './routes/private-route/private-route.component';
 
 
 const App = () => {
@@ -22,12 +23,17 @@ const App = () => {
           <Route path='/' element={<Home />} />
           <Route path='/tournaments' element={<TournamentList/>}/>
           <Route path='/tournament/:id' element={<TournamentDetails/>}/>
-          <Route path='/new-tournament' element={<TournamentForm/>}/>
-          <Route path='/dashboard' element={<DashboardPage/>}/>
+          <Route path='/new-tournament' element={<PrivateRoute/>}>
+            <Route path='/new-tournament' element={<TournamentForm/>}/>
+          </Route>
+          <Route path='/dashboard' element={<PrivateRoute/>}>
+            <Route path='/dashboard' element={<DashboardPage/>}/>
+          </Route>
+          <Route path='/account' element={<PrivateRoute/>}>
+            <Route path='/account' element={<UserSettings/>}/>
+          </Route>
           <Route path='/authentication' element={<Authentication />}/>
           <Route path='/signup' element={<SignUp/>}/>
-          <Route path='/checkout' element={<Checkout/>}/>
-          <Route path='/account' element={<UserSettings/>}/>
           <Route path='*' element={<PageNotFound/>} />
       </Routes>
     </div>
