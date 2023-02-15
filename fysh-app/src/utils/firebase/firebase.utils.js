@@ -9,6 +9,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendEmailVerification,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import {
   getFirestore,
@@ -66,6 +68,16 @@ export const addCollectionAndDocuments = async (
 
   await batch.commit();
 };
+
+export const triggerPasswordReset = async (email) => {
+  try {
+    const res = await sendPasswordResetEmail(auth, email);
+    console.log('Password reset email sent to ', email);
+    return res;
+  } catch(err) {
+    console.error(err);
+  }
+}
 
 export const createUserDocumentFromAuth = async (
   userAuth,
@@ -127,6 +139,14 @@ export const createDocInCollection = async (objectToAdd, collectionToPut) => {
     const res = getDocInCollection(collectionToPut, docRef.id);
     return res;
   } catch (err) {
+    console.error(err);
+  }
+}
+
+export const triggerEmailVerification = (user) => {
+  try {
+    sendEmailVerification(user);
+  } catch(err) {
     console.error(err);
   }
 }

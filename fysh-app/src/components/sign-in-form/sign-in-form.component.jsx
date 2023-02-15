@@ -5,7 +5,7 @@ import { signInAuthUserWithEmailAndPassword, signInWithGooglePopup } from "../..
 import { LockClosedIcon } from '@heroicons/react/20/solid'
 
 import PropTypes from 'prop-types';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
+import { Link, MemoryRouter, useNavigate } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { UserContext } from "../../contexts/user.context";
@@ -21,7 +21,7 @@ const defaultFormFields = {
 const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { email, password } = formFields;
-    const { currentUserUID } = useContext(UserContext);
+    const { currentUser } = useContext(UserContext);
 
     function Router(props) {
         const { children } = props;
@@ -33,9 +33,9 @@ const SignInForm = () => {
   }
 
   useEffect(() => {
-    if(currentUserUID){
+    if(currentUser){
       navigate('/');
-      console.log('You are already signed in!');
+      console.error('You are already signed in!');
     }
   }, [formFields])
 
@@ -44,10 +44,6 @@ const SignInForm = () => {
   Router.propTypes = {
     children: PropTypes.node,
   };
-
-    const resetFormFields = () => {
-        setFormFields(defaultFormFields);
-    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -88,7 +84,7 @@ const SignInForm = () => {
     return (
     <>
       <Toaster />
-      <div className="flex min-h-full items-center bg-gray-100 rounded justify-center py-12 px-8 lg:px-80 lg:py-40 shadow">
+      <div className="flex min-h-full items-center bg-gray-100 rounded justify-center py-6 px-2 lg:px-80 lg:py-40 shadow">
         <div className="w-full max-w-md space-y-8">
           <div>
             <img
@@ -137,7 +133,7 @@ const SignInForm = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-10">
               <div className="flex items-center">
                 <input
                   id="remember-me"
@@ -151,9 +147,9 @@ const SignInForm = () => {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link to='/forgot-password' className="font-medium text-blue-600 hover:text-blue-500">
                   Forgot your password?
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -173,6 +169,11 @@ const SignInForm = () => {
                     Sign in with Google
                 </button>
             </div>
+            <div className="text-sm text-left">
+                <Link to='/signup' className="font-medium text-blue-600 hover:text-blue-500">
+                  Don't have an account?
+                </Link>
+              </div>
           </form>
         </div>
       </div>
@@ -181,34 +182,3 @@ const SignInForm = () => {
 }
 
 export default SignInForm;
-
-//  <Box className='login-form'
-//         >
-//             <Toaster/>
-//             <form onSubmit={handleSubmit} noValidate autoComplete="off">
-//                 <div className="header">
-//                     <Typography variant="h4">I already have an account</Typography>
-//                     <Typography variant="subtitle1">Sign up with your email and password:</Typography>
-//                 </div>
-//                 <div className="content">
-//                     <TextField className="input-field" variant='standard' label='Email' type='email' required onChange={handleChange} name='email' value={email}/>
-
-//                     <TextField className="input-field" variant='standard' label='Password' type='password' required onChange={handleChange} name='password' value={password}/>
-//                 </div>
-//                 <div className="action">
-//                     <Button
-//                     variant="contained" 
-//                     type='submit'
-//                     className='action-button'
-//                     >Sign in</Button>
-//                     <Button
-//                     type='button' 
-//                     onClick={() => navigate('/signup')}
-//                     variant="contained"
-//                     className='action-button'
-//                     >Register</Button>
-
-//                 </div>
-                
-//             </form>
-//         </Box>

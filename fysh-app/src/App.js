@@ -13,6 +13,7 @@ import PageNotFound from './routes/404/404.component';
 import DashboardPage from './routes/dashboard/dashboard.component';
 
 import PrivateRoute from './routes/private-route/private-route.component';
+import ForgotPasswordPage from './routes/authentication/forgot-password.component';
 
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
           </Route>
           <Route path='/authentication' element={<Authentication />}/>
           <Route path='/signup' element={<SignUp/>}/>
+          <Route path='/forgot-password' element={<ForgotPasswordPage/>}/>
           <Route path='*' element={<PageNotFound/>} />
       </Routes>
     </div>

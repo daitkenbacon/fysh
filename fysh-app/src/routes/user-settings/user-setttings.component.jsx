@@ -1,4 +1,4 @@
-import { updateDocInCollection, storage } from "../../utils/firebase/firebase.utils";
+import { updateDocInCollection, storage, triggerPasswordReset, triggerEmailVerification } from "../../utils/firebase/firebase.utils";
 import { ref, getDownloadURL, uploadString } from 'firebase/storage';
 
 import { useContext, useEffect, useState } from 'react';
@@ -143,14 +143,33 @@ const UserSettings = () => {
               </div>
               <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Email address</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0">{currentUser && currentUser.email}</dd>
-                <button className='font-medium text-sm text-blue-600 hover:text-blue-500'>Send Reset Email</button>
+                <dd className="mt-1 text-sm text-gray-900 sm:mt-0">
+                  {currentUser && currentUser.email} {currentUser && currentUser.emailVerified ? '(verified!)' : '(unverified)'}
+                </dd>
+                {currentUser && !currentUser.emailVerified &&
+                  <button className='font-medium text-sm text-blue-600 hover:text-blue-500'
+                  onClick={() => {triggerEmailVerification(currentUser); toast.success('Email verification sent!');}}
+                  >
+                    Resend Email Verification
+                  </button>
+                }
               </div>
-              <div className="bg-gray-50 px-4 py-5 grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt className="text-sm font-medium text-gray-500">Password</dt>
+                <dd className="mt-1 text-sm text-gray-900 sm:mt-0">*************</dd>
+                {currentUser &&
+                  <button className='font-medium text-sm text-blue-600 hover:text-blue-500'
+                  onClick={() => {triggerPasswordReset(currentUser.email); toast.success('Password reset email sent!');}}
+                  >
+                    Reset Your Password
+                  </button>
+                }
+              </div>
+              <div className="bg-white px-4 py-5 grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <label className="text-sm font-medium text-gray-500">Bio</label>
                 <textarea placeholder={currentUserDoc && (currentUserDoc.bio ? currentUserDoc.bio : `I'm just a fysher!`)} onChange={handleChange} name='bio' value={bio} className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"/>
               </div>
-              <div className="bg-white px-4 py-5 grid sm:grid-cols-3 sm:px-6">
+              <div className="bg-gray-50 px-4 py-5 grid sm:grid-cols-3 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Profile Picture</dt>
                   <div className="w-full">
                     <div className="flex items-center justify-center w-full py-3 pl-3 pr-4 text-sm rounded-md border border-gray-200">
@@ -173,7 +192,7 @@ const UserSettings = () => {
             </dl>
           </div>
         </div>
-        <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
+        <div className="bg-white shadow rounded px-4 py-3 text-right sm:px-6">
           <button
             type="submit"
             className="sm:w-auto w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"

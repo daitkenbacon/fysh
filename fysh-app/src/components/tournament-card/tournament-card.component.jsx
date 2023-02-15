@@ -31,7 +31,7 @@ const TournamentCard = ({tournament}) => {
   const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState(false);
   const [canRegister, setCanRegister] = useState(true);
-  const { currentUserUID, getUser, users } = useContext(UserContext);
+  const { currentUserUID, users, currentUser } = useContext(UserContext);
   const { getTournament } = useContext(TournamentsContext);
   const [isLoading, setIsLoading] = useState(true);
   const [daysOpen, setDaysOpen] = useState(0);
@@ -78,11 +78,11 @@ const TournamentCard = ({tournament}) => {
 
   async function handleRegister() {
     setIsRegistering(true);
-    if(!currentUserUID) {
+    if(!currentUser) {
       toast.error('You must be logged in to register for a tournament.');
       setIsRegistering(false);
       return;
-    }
+    } else if(!currentUser.isVerified)
     try {
       const tournamentDoc = getTournament(id);
       const participantsQuery = tournamentDoc.participants;
