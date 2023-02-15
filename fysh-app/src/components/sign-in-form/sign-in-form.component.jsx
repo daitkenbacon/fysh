@@ -169,7 +169,7 @@ const SignInForm = () => {
                     Sign in with Google
                 </button>
             </div>
-            <div className="text-sm text-center">
+            <div className="text-sm text-left">
                 <Link to='/signup' className="font-medium text-blue-600 hover:text-blue-500">
                   Don't have an account?
                 </Link>
@@ -182,34 +182,3 @@ const SignInForm = () => {
 }
 
 export default SignInForm;
-
-//  <Box className='login-form'
-//         >
-//             <Toaster/>
-//             <form onSubmit={handleSubmit} noValidate autoComplete="off">
-//                 <div className="header">
-//                     <Typography variant="h4">I already have an account</Typography>
-//                     <Typography variant="subtitle1">Sign up with your email and password:</Typography>
-//                 </div>
-//                 <div className="content">
-//                     <TextField className="input-field" variant='standard' label='Email' type='email' required onChange={handleChange} name='email' value={email}/>
-
-//                     <TextField className="input-field" variant='standard' label='Password' type='password' required onChange={handleChange} name='password' value={password}/>
-//                 </div>
-//                 <div className="action">
-//                     <Button
-//                     variant="contained" 
-//                     type='submit'
-//                     className='action-button'
-//                     >Sign in</Button>
-//                     <Button
-//                     type='button' 
-//                     onClick={() => navigate('/signup')}
-//                     variant="contained"
-//                     className='action-button'
-//                     >Register</Button>
-
-//                 </div>
-                
-//             </form>
-//         </Box>

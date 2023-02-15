@@ -145,11 +145,6 @@ const SignUpForm = () => {
               </div>
             </div>
 
-            <div className="text-sm">
-              <Link to='/authentication' className="font-medium text-blue-600 hover:text-blue-500">
-                Already have an account?
-              </Link>
-            </div>
 
             <div>
               <button
@@ -168,6 +163,11 @@ const SignUpForm = () => {
                 </button>
             </div>
           </form>
+            <div className="text-sm">
+              <Link to='/authentication' className="font-medium text-blue-600 hover:text-blue-500">
+                Already have an account?
+              </Link>
+            </div>
         </div>
       </div>
     </> 
