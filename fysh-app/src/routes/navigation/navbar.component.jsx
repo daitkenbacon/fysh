@@ -5,7 +5,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 import PropTypes from 'prop-types';
-import { Link as RouterLink, MemoryRouter, Outlet, useLocation } from 'react-router-dom';
+import { Link as RouterLink, MemoryRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 
 import { UserContext } from '../../contexts/user.context';
@@ -36,7 +36,7 @@ const Navbar = () => {
       { name: 'Tournaments', href: 'tournaments', current: (routerLocation.pathname==='/tournaments') },
       { name: 'New', href: 'new-tournament', current: (routerLocation.pathname==='/new-tournament') },
     ])
-  }, [routerLocation])
+  }, [routerLocation, currentUser])
 
   function Router(props) {
     const { children } = props;
@@ -104,7 +104,7 @@ const Navbar = () => {
                 </div>
               </div>
               <p className='hidden sm:ml-6 sm:block text-white cursor-default'>
-                {currentUserName}
+                {currentUser && currentUserDoc && currentUserDoc.displayName}
               </p>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 

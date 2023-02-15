@@ -54,9 +54,9 @@ const SignInForm = () => {
 
         try {
             const res = await signInAuthUserWithEmailAndPassword(email, password);
-            console.log('signInAuthUser:', res);
-            resetFormFields();
-            navigate('/tournaments');
+            if(res){
+              navigate('/tournaments');
+            }
         } catch(error) {
             switch(error.code) {
                 case 'auth/wrong-password':
@@ -64,6 +64,9 @@ const SignInForm = () => {
                     break;
                 case 'auth/user-not-found':
                     toast("No user associated with this email.");
+                    break;
+                case 'auth/too-many-requests':
+                    toast('Too many login requests. Account temporarily disabled.');
                     break;
                 default:
                     toast(error);
