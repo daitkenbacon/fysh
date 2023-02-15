@@ -6,6 +6,7 @@ import { LockClosedIcon } from '@heroicons/react/20/solid'
 import { Toaster, toast } from 'react-hot-toast';
 
 import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth, signInWithGooglePopup } from "../../utils/firebase/firebase.utils";
+import { sendEmailVerification } from "firebase/auth";
 
 const defaultFormFields = {
         displayName: '',
@@ -39,13 +40,13 @@ const SignUpForm = () => {
 
         try {
             const { user } = await createAuthUserWithEmailAndPassword(email, password);
-
+            await sendEmailVerification(user);
             await createUserDocumentFromAuth(user, { displayName });
             resetFormFields();
-            navigate('/tournaments');
+            toast.success(`Email verification sent to ${email}!`);
         } catch (error) {
             if (error.code === 'auth/email-already-in-use') {
-                toast('Cannot create user, email already in use');
+                toast.error('Cannot create user, email already in use');
         } else {
             toast.error('Could not register user: ', error);
             console.error(error);

@@ -169,6 +169,11 @@ const SignInForm = () => {
                     Sign in with Google
                 </button>
             </div>
+            <div className="text-sm text-center">
+                <Link to='/signup' className="font-medium text-blue-600 hover:text-blue-500">
+                  Don't have an account?
+                </Link>
+              </div>
           </form>
         </div>
       </div>
