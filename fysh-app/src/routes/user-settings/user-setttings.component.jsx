@@ -1,4 +1,4 @@
-import { updateDocInCollection, storage, triggerPasswordReset } from "../../utils/firebase/firebase.utils";
+import { updateDocInCollection, storage, triggerPasswordReset, triggerEmailVerification } from "../../utils/firebase/firebase.utils";
 import { ref, getDownloadURL, uploadString } from 'firebase/storage';
 
 import { useContext, useEffect, useState } from 'react';
@@ -143,7 +143,16 @@ const UserSettings = () => {
               </div>
               <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Email address</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0">{currentUser && currentUser.email}</dd>
+                <dd className="mt-1 text-sm text-gray-900 sm:mt-0">
+                  {currentUser && currentUser.email} {currentUser && currentUser.emailVerified ? '(verified!)' : '(unverified)'}
+                </dd>
+                {currentUser && !currentUser.emailVerified &&
+                  <button className='font-medium text-sm text-blue-600 hover:text-blue-500'
+                  onClick={() => {triggerEmailVerification(currentUser); toast.success('Email verification sent!');}}
+                  >
+                    Resend Email Verification
+                  </button>
+                }
               </div>
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Password</dt>

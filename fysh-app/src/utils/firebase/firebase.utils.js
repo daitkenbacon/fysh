@@ -143,6 +143,14 @@ export const createDocInCollection = async (objectToAdd, collectionToPut) => {
   }
 }
 
+export const triggerEmailVerification = (user) => {
+  try {
+    sendEmailVerification(user);
+  } catch(err) {
+    console.error(err);
+  }
+}
+
 export const deleteDocInCollection = async (docId, collectionName) => {
   try {
     const docRef = doc(db, collectionName, docId);
