@@ -274,8 +274,9 @@ const TournamentForm = () => {
                           <img src={previewImage}/>
                           <button 
                           onClick={handleUpload}
+                          disabled={isUploading}
                           className='p-2 mt-1 shadow bg-blue-600 rounded-lg text-white'>
-                            Upload image
+                            {isUploading ? 'Uploading...' : 'Upload'}
                             </button>
                         </div>
                       }

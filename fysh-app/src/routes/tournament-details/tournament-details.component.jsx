@@ -23,7 +23,7 @@ const TournamentDetails = () => {
     const [tournament, setTournament] = useState([]);
 
     const [startDate, setStartDate] = useState('');
-    const [winnerCatch, setWinnerCatch] = useState('');
+    const [winnerCatch, setWinnerCatch] = useState(null);
 
     const [daysOpen, setDaysOpen] = useState(1);
 
@@ -71,11 +71,17 @@ const TournamentDetails = () => {
     }, [tournaments])
 
     useEffect(() => {
-        if(winner){
+        if(winner && !winnerCatch){
             let item = getCatch(winner)
-                setWinnerCatch(item);
-            }
+            setWinnerCatch(item);
+        }
     }, [winner])
+
+    useEffect(() => {
+      if(winnerCatch) {
+        setIsTournamentOpen(false);
+      }
+    }, [winnerCatch])
 
     const declareWinner = async (submissionId) => {
         try {
@@ -123,12 +129,16 @@ const TournamentDetails = () => {
                     {/* Options */}
                     <div className="lg:row-span-3 lg:mt-0 flex flex-col items-center">
                         {winnerCatch &&
+                          <> 
+                            <p>This tournament is closed.</p>
+                            <br/>
                             <button
                             onClick={() => {handleOpenCatchModal(winnerCatch)}}
                             className="lg:border-b flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 py-3 px-8 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                             >
                                 See Winning Catch!
                             </button>
+                          </>
                         }
                         {isTournamentOpen && !participants.includes(currentUserUID) &&
                             <button
@@ -138,18 +148,22 @@ const TournamentDetails = () => {
                                 Register for Tournament
                             </button>
                         }
-                        <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center">
-                            <CalendarDaysIcon className="h-8 w-8 text-leaf-600"/>
-                            <p className="text-2xl tracking-tight text-gray-900">{startDate}</p>
-                        </div>
-                        <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center">
-                            <ClockIcon className="h-8 text-leaf-600 w-8"/>
-                            <p className="text-2xl tracking-tight text-gray-900">{`${daysOpen} ${daysOpen > 1 ? 'Days' : 'Day'}`}</p>
-                        </div>
-                        <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center rounded">
-                            <UserGroupIcon className="h-8 text-leaf-600"/>
-                            <p className="text-2xl tracking-tight text-gray-900">{participants? participants.length : '0'} / {max_participants}</p>
-                        </div>
+                        {isTournamentOpen &&
+                          <>
+                            <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center">
+                                <CalendarDaysIcon className="h-8 w-8 text-leaf-600"/>
+                                <p className="text-2xl tracking-tight text-gray-900">{startDate}</p>
+                            </div>
+                            <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center">
+                                <ClockIcon className="h-8 text-leaf-600 w-8"/>
+                                <p className="text-2xl tracking-tight text-gray-900">{`${daysOpen} ${daysOpen > 1 ? 'Days' : 'Day'}`}</p>
+                            </div>
+                            <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center rounded">
+                                <UserGroupIcon className="h-8 text-leaf-600"/>
+                                <p className="text-2xl tracking-tight text-gray-900">{participants? participants.length : '0'} / {max_participants}</p>
+                            </div>
+                          </>
+                        }
                     </div>
                     <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pt-6 lg:pb-16 lg:pr-8">
                         {/* Description and details */}
@@ -251,68 +265,3 @@ const TournamentDetails = () => {
 }
 
 export default TournamentDetails;
-
-//  <div className="tournament-details-container">
-//             <Toaster/>
-//             <h1>{name}</h1>
-//             <div className="tournament-details-body">
-//                 <img alt={name} src={image}/>
-//                 <div className='content-top'>
-//                     <div>
-//                         <h4>Description</h4>
-//                         <p>{description}</p>
-//                     </div>
-//                     <div >
-//                         <h4>Rules</h4>
-//                         <p>{rules}</p>
-//                     </div>
-//                 </div>
-//                 <div className='content-bottom'>
-//                     <div >
-//                         <h4>Tournament Dates</h4>
-//                         <p>{startDate} - {endDate}</p>
-//                     </div>
-//                     <div >
-//                         <h4>Registered Fyshers</h4>
-//                         <p>{participants ? participants.length : 0}/{max_participants}</p>
-//                     </div>
-//                     <div >
-//                         <h4>Registration Fee</h4>
-//                         <p>${registration_fee}</p>
-//                     </div>
-//                 </div>
-//             </div>
-//             <div className="tournament-details-submissions">
-//                 <div className="winning-submission">
-//                     {winnerCatch &&
-//                     <div>
-//                         <h2>Winning Catch:</h2>
-//                         <CatchCard submission={winnerCatch}/>
-//                     </div>
-//                     }
-//                 </div>
-//                 <h2>{`${catches ? catches.length : 'No'} Submissions${isTournamentOpen ? '' : ' (CLOSED)'}`}</h2>
-//                 {isTournamentOpen &&
-//                     <Button onClick={handleOpenFormModal} variant='contained'>Submit a Catch</Button>
-//                 }
-//                 <div className="submissions-container">
-//                     {catches &&
-//                         catches.map((submission) => {
-//                             return (
-//                                 <CatchCard userID={currentUserUID} isOpen={isTournamentOpen} declareWinner={declareWinner} removeSubmission={deleteSubmission} isHost={isHost} key={submission} submission={submission}/>
-//                             )
-//                         })
-//                     }
-//                 </div>
-//             </div>
-//             <Modal
-//                 open={openFormModal}
-//                 onClose={handleCloseFormModal}
-//                 aria-labelledby="Submit a Catch"
-//                 aria-describedby="Upload a catch to submit to the tournament."
-//             >
-//                 <Box sx={modalStyle}>
-//                     <CatchForm setOpenFormModal={setOpenFormModal} userID={currentUserUID} tournament={tournament}/>
-//                 </Box>
-//             </Modal>
-//         </div>
