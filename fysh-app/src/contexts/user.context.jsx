@@ -89,11 +89,6 @@ export const UserProvider = ({ children }) => {
             return null;
         }
     }
-
-    function ResetPassword() {
-        const [email, setEmail] = useState('');
-        
-    }
     
     const value = { currentUser, setCurrentUser, currentUserUID, currentUserName, currentUserDoc, users, getUser, currentTournament, upcomingTournaments }
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>
