@@ -1,20 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { HashRouter } from 'react-router-dom';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { HashRouter } from "react-router-dom";
 
-import { UserProvider } from './contexts/user.context';
-import { TournamentsProvider } from './contexts/tournaments.context';
+import { UserProvider } from "./contexts/user.context";
+import { TournamentsProvider } from "./contexts/tournaments.context";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <HashRouter>
       <TournamentsProvider>
         <UserProvider>
-            <App />
+          <App />
         </UserProvider>
       </TournamentsProvider>
     </HashRouter>

@@ -1,19 +1,18 @@
-import { useState } from 'react';
-import { Toaster, toast } from 'react-hot-toast';
-import { triggerPasswordReset } from '../../utils/firebase/firebase.utils';
+import { useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
+import { triggerPasswordReset } from "../../utils/firebase/firebase.utils";
 
 const ForgotPasswordPage = () => {
+  const [email, setEmail] = useState("");
 
-    const [email, setEmail] = useState('');
+  const handleChange = (event) => {
+    const { value } = event.target;
 
-    const handleChange = (event) => {
-        const { value } = event.target;
+    setEmail(value);
+    console.log(email);
+  };
 
-        setEmail(value);
-        console.log(email)
-    };
-
-    return (
+  return (
     <>
       <Toaster />
       <div className="flex min-h-full items-center rounded justify-center px-8 lg:px-80 lg:py-20">
@@ -61,8 +60,8 @@ const ForgotPasswordPage = () => {
           </form>
         </div>
       </div>
-    </> 
-    )
-}
+    </>
+  );
+};
 
 export default ForgotPasswordPage;

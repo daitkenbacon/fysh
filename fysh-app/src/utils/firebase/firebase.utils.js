@@ -10,8 +10,8 @@ import {
   signOut,
   onAuthStateChanged,
   sendEmailVerification,
-  sendPasswordResetEmail
-} from 'firebase/auth';
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import {
   getFirestore,
   doc,
@@ -24,8 +24,8 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
-} from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+} from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -36,7 +36,7 @@ const firebaseConfig = {
   projectId: "fysh-poc-db",
   storageBucket: "fysh-poc-db.appspot.com",
   messagingSenderId: "1021165233957",
-  appId: "1:1021165233957:web:0e5c8e4d576e0cd0e0dccc"
+  appId: "1:1021165233957:web:0e5c8e4d576e0cd0e0dccc",
 };
 
 // Initialize Firebase
@@ -45,13 +45,13 @@ export const storage = getStorage(app);
 
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({
-  prompt: 'select_account',
+  prompt: "select_account",
 });
 
 export const auth = getAuth();
 export const signInWithGooglePopup = () =>
   signInWithPopup(auth, googleProvider);
-  
+
 export const db = getFirestore();
 
 export const addCollectionAndDocuments = async (
@@ -72,12 +72,12 @@ export const addCollectionAndDocuments = async (
 export const triggerPasswordReset = async (email) => {
   try {
     const res = await sendPasswordResetEmail(auth, email);
-    console.log('Password reset email sent to ', email);
+    console.log("Password reset email sent to ", email);
     return res;
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
-}
+};
 
 export const createUserDocumentFromAuth = async (
   userAuth,
@@ -85,7 +85,7 @@ export const createUserDocumentFromAuth = async (
 ) => {
   if (!userAuth) return;
 
-  const userDocRef = doc(db, 'users', userAuth.uid);
+  const userDocRef = doc(db, "users", userAuth.uid);
 
   const userSnapshot = await getDoc(userDocRef);
 
@@ -101,7 +101,7 @@ export const createUserDocumentFromAuth = async (
         ...additionalInformation,
       });
     } catch (error) {
-      console.error('error creating the user', error.message);
+      console.error("error creating the user", error.message);
     }
   }
 
@@ -116,12 +116,12 @@ export const createAuthUserWithEmailAndPassword = async (email, password) => {
 
 export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
-    try {
-      const res = await signInWithEmailAndPassword(auth, email, password);
-      return res;
-    } catch(err) {
-      console.error(err);
-    }
+  try {
+    const res = await signInWithEmailAndPassword(auth, email, password);
+    return res;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const signOutUser = async () => await signOut(auth);
@@ -133,23 +133,23 @@ export const createDocInCollection = async (objectToAdd, collectionToPut) => {
   try {
     const col = collection(db, collectionToPut);
     const docRef = await addDoc(col, objectToAdd);
-  
+
     //logs the doc ID as an object field
-    await updateDoc(docRef,{id: docRef.id})
+    await updateDoc(docRef, { id: docRef.id });
     const res = getDocInCollection(collectionToPut, docRef.id);
     return res;
   } catch (err) {
     console.error(err);
   }
-}
+};
 
 export const triggerEmailVerification = (user) => {
   try {
     sendEmailVerification(user);
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
-}
+};
 
 export const deleteDocInCollection = async (docId, collectionName) => {
   try {
@@ -159,17 +159,17 @@ export const deleteDocInCollection = async (docId, collectionName) => {
   } catch (err) {
     console.error(err);
   }
-}
+};
 
 export const updateDocInCollection = async (collectionName, docId, data) => {
   try {
     const docRef = doc(db, collectionName, docId);
-    const res = await updateDoc(docRef,data);
+    const res = await updateDoc(docRef, data);
     return res;
   } catch (err) {
     console.error(err);
   }
-}
+};
 
 export const getDocsInCollection = async (collectionToGetFrom) => {
   try {
@@ -181,25 +181,24 @@ export const getDocsInCollection = async (collectionToGetFrom) => {
         ...doc.data(),
         id: doc.id,
       });
-    })
+    });
 
     return docsArr;
-
-  } catch(error) {
+  } catch (error) {
     console.error(error);
   }
-}
+};
 
 export const getDocInCollection = async (collectionToGetFrom, docId) => {
   try {
     const docRef = doc(db, collectionToGetFrom, docId);
     const docSnap = await getDoc(docRef);
-    if(!docSnap){
-      console.error("No such document exists.")
+    if (!docSnap) {
+      console.error("No such document exists.");
       return;
     }
     return docSnap;
-  } catch(error) {
-    console.error('getDocInCollection error: ', docId, error);
+  } catch (error) {
+    console.error("getDocInCollection error: ", docId, error);
   }
-}
+};
