@@ -18,7 +18,7 @@ const CatchCard = (props) => {
     const [isCatchOwner, setIsCatchOwner] = useState(false);
     const { currentUserUID, getUser } = useContext(UserContext);
     const { getCatch, catches } = useContext(TournamentsContext);
-    const {isHost, declareWinner, isOpen, removeSubmission, submission, openModal } = props;
+    const {isHost, declareWinner, isOpen, removeSubmission, submission, openModal, winner } = props;
     const [catchDate, setCatchDate] = useState('');
     const [catchTime, setCatchTime] = useState('');
     const [userName, setUserName] = useState('');
@@ -73,7 +73,7 @@ const CatchCard = (props) => {
                      </span>
             </div>
             <div className='flex flex-row'>
-                {isHost && isOpen &&
+                {isHost && !winner &&
                     <button onClick={() => declareWinner(submission)} className='bg-blue-600 text-white hover:bg-blue-700 p-2 left-0 w-full bottom-0 declare-winner-button'>Declare winner</button>
                 }
                 {isCatchOwner && isOpen &&

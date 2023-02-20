@@ -210,7 +210,8 @@ const TournamentDetails = () => {
                         declareWinner={declareWinner} 
                         removeSubmission={deleteSubmission} 
                         isHost={isHost} key={card} 
-                        submission={card}/>
+                        submission={card}
+                        winner={!!winnerCatch}/>
                     ))}
                 </div>
             </div>
