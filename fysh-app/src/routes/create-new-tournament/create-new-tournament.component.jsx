@@ -1,171 +1,181 @@
-import React from 'react';
+import React from "react";
 
-import Resizer from 'react-image-file-resizer';
+import Resizer from "react-image-file-resizer";
 
-import PropTypes from 'prop-types';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
-import { StaticRouter } from 'react-router-dom/server';
+import PropTypes from "prop-types";
+import { MemoryRouter, useNavigate } from "react-router-dom";
+import { StaticRouter } from "react-router-dom/server";
 
-import { createDocInCollection, storage } from "../../utils/firebase/firebase.utils";
-import { ref, getDownloadURL, uploadString } from 'firebase/storage';
+import {
+  createDocInCollection,
+  storage,
+} from "../../utils/firebase/firebase.utils";
+import { ref, getDownloadURL, uploadString } from "firebase/storage";
 
 import { useState, useContext } from "react";
-import { UserContext } from '../../contexts/user.context';
+import { UserContext } from "../../contexts/user.context";
 
-import toast, { Toaster } from 'react-hot-toast';
-import { useEffect } from 'react';
-import { TournamentsContext } from '../../contexts/tournaments.context';
-
-
+import toast, { Toaster } from "react-hot-toast";
+import { useEffect } from "react";
+import { TournamentsContext } from "../../contexts/tournaments.context";
 
 const TournamentForm = () => {
+  const { currentUser, currentUserUID } = useContext(UserContext);
+  const { addTournament } = useContext(TournamentsContext);
 
-    const { currentUser, currentUserUID } = useContext(UserContext);
-    const { addTournament } = useContext(TournamentsContext);
+  const defaultFormFields = {
+    name: "",
+    description: "",
+    rules: "",
+    registration_fee: 0,
+    max_participants: 1,
+    participants: [],
+    start_date: new Date(),
+    end_date: new Date(),
+    image: "",
+    author: currentUserUID,
+    catches: [],
+    isOpen: true,
+  };
 
-    const defaultFormFields = {
-        name: '', 
-        description: '',
-        rules: '',
-        registration_fee: 0,
-        max_participants: 1,
-        participants: [],
-        start_date: new Date(),
-        end_date: new Date(),
-        image: '',
-        author: currentUserUID,
-        catches: [],
-        isOpen: true,
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [previewImage, setPreviewImage] = useState("");
+  const [resizedImage, setResizedImage] = useState("");
+  const [isImageUploaded, setIsImageUploaded] = useState(false);
+  const navigate = useNavigate();
+  const {
+    name,
+    description,
+    rules,
+    registration_fee,
+    max_participants,
+    author,
+  } = formFields;
+
+  function Router(props) {
+    const { children } = props;
+    if (typeof window === "undefined") {
+      return <StaticRouter location="/">{children}</StaticRouter>;
     }
 
-    const [formFields, setFormFields] = useState(defaultFormFields);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isUploading, setIsUploading] = useState(false);
-    const [selectedImage, setSelectedImage] = useState('');
-    const [previewImage, setPreviewImage] = useState('');
-    const [resizedImage, setResizedImage] = useState('');
-    const [isImageUploaded, setIsImageUploaded] = useState(false);
-    const navigate = useNavigate();
-    const { name, description, rules, registration_fee, max_participants, author } = formFields;
+    return <MemoryRouter>{children}</MemoryRouter>;
+  }
 
-    function Router(props) {
-        const { children } = props;
-        if (typeof window === 'undefined') {
-        return <StaticRouter location="/">{children}</StaticRouter>;
-        }
+  Router.propTypes = {
+    children: PropTypes.node,
+  };
 
-        return <MemoryRouter>{children}</MemoryRouter>;
+  useEffect(() => {
+    if (!selectedImage) {
+      setPreviewImage(undefined);
+      return;
     }
 
-    Router.propTypes = {
-        children: PropTypes.node,
-    };
+    const objectUrl = URL.createObjectURL(selectedImage);
+    setPreviewImage(objectUrl);
+  }, [selectedImage]);
 
-    useEffect(() => {
-        if(!selectedImage) {
-            setPreviewImage(undefined);
-            return;
-        }
+  useEffect(() => {
+    if (currentUserUID) {
+      setFormFields({ ...formFields, author: currentUserUID });
+    }
+  }, [currentUserUID]);
 
-        const objectUrl = URL.createObjectURL(selectedImage);
-        setPreviewImage(objectUrl);
-    }, [selectedImage])
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (isUploading) {
+      toast.error("Image is still uploading.");
+      return;
+    } else if (!isImageUploaded) {
+      toast.error("Please upload the image you have selected.");
+      return;
+    } else if (currentUserUID) {
+      try {
+        setIsLoading(true);
+        await createDocInCollection(formFields, "tournaments");
+        addTournament(formFields);
+        setFormFields(defaultFormFields);
+        setIsLoading(false);
+        console.log("Finished uploading: ", formFields);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      toast.error("You must be logged in to create a tournament!");
+    }
+  };
 
-    useEffect(() => {
-        if(currentUserUID){
-            setFormFields({...formFields, author: currentUserUID});
-        }
-    }, [currentUserUID])
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        if(isUploading) {
-            toast.error('Image is still uploading.');
-            return;
-        }
-        else if(!isImageUploaded){
-          toast.error('Please upload the image you have selected.');
-          return;
-        }
-        else if(currentUserUID){
-            try{
-                setIsLoading(true);
-                await createDocInCollection(formFields, 'tournaments');
-                addTournament(formFields);
-                setFormFields(defaultFormFields);
-                setIsLoading(false);
-                console.log('Finished uploading: ', formFields);
-            } catch(err) {
-                console.error(err);
-            }
-        } else {
-            toast.error("You must be logged in to create a tournament!")
-        }
-    };
-
-    const resizeFile = (file) =>
-        new Promise((resolve) => {
-            Resizer.imageFileResizer(file, 500, 500, 'jpeg', 100, 0, (uri) => {
-            resolve(uri);
-            });
+  const resizeFile = (file) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(file, 500, 500, "jpeg", 100, 0, (uri) => {
+        resolve(uri);
+      });
     });
 
-    const handleUpload = async () => {
-        if (!selectedImage) {
-            toast.error('Please choose a file before uploading.');
-            return;
-        }
-
-        const newMetadata = {
-            cacheControl: 'public,max-age=300',
-            contentType: 'image/jpeg'
-        };
-        setIsUploading(true);
-        const storageRef = ref(storage, `/tournaments/${selectedImage.name}`);
-        console.log(storageRef);
-        uploadString(storageRef, resizedImage, 'data_url', newMetadata).then((snapshot) => {
-            getDownloadURL(snapshot.ref).then((URL) => {
-                setFormFields({ ...formFields, image: URL})
-                setIsUploading(false);
-                setIsImageUploaded(true);
-            })
-        }).catch((err) => console.log(err));
+  const handleUpload = async () => {
+    if (!selectedImage) {
+      toast.error("Please choose a file before uploading.");
+      return;
     }
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-
-        setFormFields({ ...formFields, [name]: value });
+    const newMetadata = {
+      cacheControl: "public,max-age=300",
+      contentType: "image/jpeg",
     };
+    setIsUploading(true);
+    const storageRef = ref(storage, `/tournaments/${selectedImage.name}`);
+    console.log(storageRef);
+    uploadString(storageRef, resizedImage, "data_url", newMetadata)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((URL) => {
+          setFormFields({ ...formFields, image: URL });
+          setIsUploading(false);
+          setIsImageUploaded(true);
+        });
+      })
+      .catch((err) => console.log(err));
+  };
 
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        if (!event.target.files || event.target.files.length === 0) {
-            setSelectedImage(undefined);
-            return;
-        }
-        if(file.size > (5 * 1024 * 1024)){
-            toast.error('File must be less than 5MB.')
-        } else {
-            try{
-                const uri = await resizeFile(file);
-                setResizedImage(uri);
-                setSelectedImage(file);
-            } catch(err) {
-                console.error(err);
-            }
-        }
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!event.target.files || event.target.files.length === 0) {
+      setSelectedImage(undefined);
+      return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File must be less than 5MB.");
+    } else {
+      try {
+        const uri = await resizeFile(file);
+        setResizedImage(uri);
+        setSelectedImage(file);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
 
-    return (
+  return (
     <>
-      <div className='lg: pt-20 p-5 max-w-screen-xl mx-auto'>
+      <div className="lg: pt-20 p-5 max-w-screen-xl mx-auto">
         <div className="md:grid md:grid-cols-3 md:gap-6">
           <div className="md:col-span-1">
             <div className="px-4 sm:px-0">
-              <h3 className="text-3xl font-medium leading-6 text-gray-900">New Tournament</h3>
+              <h3 className="text-3xl font-medium leading-6 text-gray-900">
+                New Tournament
+              </h3>
               <p className="mt-1 text-md text-gray-600">
-                Get fyshing! Enter all of the details for your tournament here. All fields are required.
+                Get fyshing! Enter all of the details for your tournament here.
+                All fields are required.
               </p>
             </div>
           </div>
@@ -175,7 +185,10 @@ const TournamentForm = () => {
                 <div className="space-y-6 bg-white px-4 py-5 sm:p-6">
                   <div className="grid grid-cols-3 gap-6">
                     <div className="col-span-3 sm:col-span-2">
-                      <label htmlFor="name" className="block text-md font-medium text-gray-700">
+                      <label
+                        htmlFor="name"
+                        className="block text-md font-medium text-gray-700"
+                      >
                         Tournament Name
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
@@ -193,7 +206,10 @@ const TournamentForm = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="description" className="block text-md font-medium text-gray-700">
+                    <label
+                      htmlFor="description"
+                      className="block text-md font-medium text-gray-700"
+                    >
                       About
                     </label>
                     <div className="mt-1">
@@ -213,7 +229,10 @@ const TournamentForm = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="rules" className="block text-md font-medium text-gray-700">
+                    <label
+                      htmlFor="rules"
+                      className="block text-md font-medium text-gray-700"
+                    >
                       Rules
                     </label>
                     <div className="mt-1">
@@ -233,53 +252,58 @@ const TournamentForm = () => {
                   </div>
 
                   <div>
-                    <label className="block text-md font-medium text-gray-700">Cover photo</label>
+                    <label className="block text-md font-medium text-gray-700">
+                      Cover photo
+                    </label>
                     <div className="mt-1 flex justify-center rounded-md border-2 border-gray-200 px-6 pt-5 pb-6">
-                      {!selectedImage &&
+                      {!selectedImage && (
                         <div className="space-y-1 text-center">
-                        <svg
-                          className="mx-auto h-12 w-12 text-gray-400"
-                          stroke="currentColor"
-                          fill="none"
-                          viewBox="0 0 48 48"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        <div className="flex text-sm text-gray-600">
-                          <label
-                            htmlFor="file-upload"
-                            className="relative items-center cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500"
+                          <svg
+                            className="mx-auto h-12 w-12 text-gray-400"
+                            stroke="currentColor"
+                            fill="none"
+                            viewBox="0 0 48 48"
+                            aria-hidden="true"
                           >
-                            <input
-                            type="file"
-                            accept='image/*'
-                            onChange={handleFileChange}
-                            id="file-upload" 
-                            name="file-upload"
-                            className='border-2 rounded'
+                            <path
+                              d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                             />
-                          </label>
+                          </svg>
+                          <div className="flex text-sm text-gray-600">
+                            <label
+                              htmlFor="file-upload"
+                              className="relative items-center cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500"
+                            >
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                id="file-upload"
+                                name="file-upload"
+                                className="border-2 rounded"
+                              />
+                            </label>
+                          </div>
+                          <p className="text-xs text-gray-500">
+                            PNG, JPG, GIF up to 5MB
+                          </p>
                         </div>
-                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
-                      </div>
-                      }
-                      {selectedImage &&
-                        <div className=''>
-                          <img src={previewImage}/>
-                          <button 
-                          onClick={handleUpload}
-                          disabled={isUploading}
-                          className='p-2 mt-1 shadow bg-blue-600 rounded-lg text-white'>
-                            {isUploading ? 'Uploading...' : 'Upload'}
-                            </button>
+                      )}
+                      {selectedImage && (
+                        <div className="">
+                          <img src={previewImage} />
+                          <button
+                            onClick={handleUpload}
+                            disabled={isUploading}
+                            className="p-2 mt-1 shadow bg-blue-600 rounded-lg text-white"
+                          >
+                            {isUploading ? "Uploading..." : "Upload"}
+                          </button>
                         </div>
-                      }
+                      )}
                     </div>
                   </div>
                 </div>
@@ -297,12 +321,13 @@ const TournamentForm = () => {
         </div>
       </div>
     </>
-    )
-}
+  );
+};
 
 export default TournamentForm;
 
-{/* <div>
+{
+  /* <div>
             <div className='header'>
             <Typography sx={{
                 fontFamily: 'Abril Fatface, cursive',
@@ -368,4 +393,5 @@ export default TournamentForm;
                     <Button disabled={isLoading || isUploading} sx={{width: 100, alignSelf: 'center', backgroundColor: '#91AA9D', color: '#FCFFF5', mb: 2, '&:hover': {backgroundColor: '#576a60'}}} variant='contained' type='submit'>{`${isLoading ? 'Submitting...' : 'Submit'}`}</Button>
                 </form>
             </div>
-        </div> */}
+        </div> */
+}

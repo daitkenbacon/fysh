@@ -1,43 +1,46 @@
 import { useState, useContext } from "react";
 
-import { signInAuthUserWithEmailAndPassword, signInWithGooglePopup } from "../../utils/firebase/firebase.utils";
+import {
+  signInAuthUserWithEmailAndPassword,
+  signInWithGooglePopup,
+} from "../../utils/firebase/firebase.utils";
 
-import { LockClosedIcon } from '@heroicons/react/20/solid'
+import { LockClosedIcon } from "@heroicons/react/20/solid";
 
-import PropTypes from 'prop-types';
-import { Link, MemoryRouter, useNavigate } from 'react-router-dom';
-import { StaticRouter } from 'react-router-dom/server';
+import PropTypes from "prop-types";
+import { Link, MemoryRouter, useNavigate } from "react-router-dom";
+import { StaticRouter } from "react-router-dom/server";
 
 import { UserContext } from "../../contexts/user.context";
 
-import { Toaster, toast } from 'react-hot-toast';
+import { Toaster, toast } from "react-hot-toast";
 import { useEffect } from "react";
 
 const defaultFormFields = {
-        email: '',
-        password: '',
-    }
+  email: "",
+  password: "",
+};
 
 const SignInForm = () => {
-    const [formFields, setFormFields] = useState(defaultFormFields);
-    const { email, password } = formFields;
-    const { currentUser } = useContext(UserContext);
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { email, password } = formFields;
+  const { currentUser } = useContext(UserContext);
 
-    function Router(props) {
-        const { children } = props;
-        if (typeof window === 'undefined') {
-        return <StaticRouter location="/">{children}</StaticRouter>;
-        }
+  function Router(props) {
+    const { children } = props;
+    if (typeof window === "undefined") {
+      return <StaticRouter location="/">{children}</StaticRouter>;
+    }
 
-        return <MemoryRouter>{children}</MemoryRouter>;
+    return <MemoryRouter>{children}</MemoryRouter>;
   }
 
   useEffect(() => {
-    if(currentUser){
-      navigate('/');
-      console.error('You are already signed in!');
+    if (currentUser) {
+      navigate("/");
+      console.error("You are already signed in!");
     }
-  }, [formFields])
+  }, [formFields]);
 
   const navigate = useNavigate();
 
@@ -45,43 +48,42 @@ const SignInForm = () => {
     children: PropTypes.node,
   };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-        try {
-            const res = await signInAuthUserWithEmailAndPassword(email, password);
-            if(res){
-              navigate('/tournaments');
-            }
-        } catch(error) {
-            switch(error.code) {
-                case 'auth/wrong-password':
-                    toast('Incorrect password.');
-                    break;
-                case 'auth/user-not-found':
-                    toast("No user associated with this email.");
-                    break;
-                case 'auth/too-many-requests':
-                    toast('Too many login requests. Account temporarily disabled.');
-                    break;
-                default:
-                    toast(error);
-            }
-            
-        }
-    };
-
-    const signInWithGoogle = async () => {
-        await signInWithGooglePopup();
+    try {
+      const res = await signInAuthUserWithEmailAndPassword(email, password);
+      if (res) {
+        navigate("/tournaments");
+      }
+    } catch (error) {
+      switch (error.code) {
+        case "auth/wrong-password":
+          toast("Incorrect password.");
+          break;
+        case "auth/user-not-found":
+          toast("No user associated with this email.");
+          break;
+        case "auth/too-many-requests":
+          toast("Too many login requests. Account temporarily disabled.");
+          break;
+        default:
+          toast(error);
+      }
     }
+  };
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
+  const signInWithGoogle = async () => {
+    await signInWithGooglePopup();
+  };
 
-        setFormFields({ ...formFields, [name]: value });
-    };
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
-    return (
+    setFormFields({ ...formFields, [name]: value });
+  };
+
+  return (
     <>
       <Toaster />
       <div className="flex min-h-full items-center bg-gray-100 rounded justify-center py-6 px-2 lg:px-80 lg:py-40 shadow">
@@ -141,13 +143,19 @@ const SignInForm = () => {
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-900"
+                >
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <Link to='/forgot-password' className="font-medium text-blue-600 hover:text-blue-500">
+                <Link
+                  to="/forgot-password"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                >
                   Forgot your password?
                 </Link>
               </div>
@@ -159,26 +167,33 @@ const SignInForm = () => {
                 className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <LockClosedIcon className="h-5 w-5 text-blue-500 group-hover:text-blue-400" aria-hidden="true" />
+                  <LockClosedIcon
+                    className="h-5 w-5 text-blue-500 group-hover:text-blue-400"
+                    aria-hidden="true"
+                  />
                 </span>
                 Sign in
               </button>
-                <button 
+              <button
                 onClick={signInWithGoogle}
-                className="group mt-1 relative flex w-full justify-center rounded-md border border-transparent bg-azure-500 py-2 px-4 text-sm font-medium text-white hover:bg-azure-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                    Sign in with Google
-                </button>
+                className="group mt-1 relative flex w-full justify-center rounded-md border border-transparent bg-azure-500 py-2 px-4 text-sm font-medium text-white hover:bg-azure-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Sign in with Google
+              </button>
             </div>
             <div className="text-sm text-left">
-                <Link to='/signup' className="font-medium text-blue-600 hover:text-blue-500">
-                  Don't have an account?
-                </Link>
-              </div>
+              <Link
+                to="/signup"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
+                Don't have an account?
+              </Link>
+            </div>
           </form>
         </div>
       </div>
-    </> 
-    )
-}
+    </>
+  );
+};
 
 export default SignInForm;
