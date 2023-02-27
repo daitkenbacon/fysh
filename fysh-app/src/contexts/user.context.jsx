@@ -64,18 +64,18 @@ export const UserProvider = ({ children }) => {
         tournament.participants.includes(currentUserUID)
       ); //If any tournaments' participants includes user, add them to array.
       let activeTourns = userTourns.filter(
-        (tournament) => new Date(tournament.end_date.seconds * 1000) >= today
+        (tournament) => new Date(tournament.end_date) >= today
       ); //Only tournaments that haven't ended yet.
       let sortedTourns = activeTourns.sort(
-        (a, b) => a.start_date - b.start_date
+        (a, b) => new Date(a.start_date) - new Date(b.start_date)
       );
       setUpcomingTournaments(sortedTourns);
 
       if (sortedTourns && sortedTourns.length > 0) {
         let currentTourn = sortedTourns.filter(
           (tournament) =>
-            today >= new Date(tournament.start_date.seconds * 1000) &&
-            today <= new Date(tournament.end_date.seconds * 1000)
+            today >= new Date(tournament.start_date) &&
+            today <= new Date(tournament.end_date)
         );
         if (currentTourn[0]) {
           let userCatches = currentTourn[0].catches.filter((c) => {

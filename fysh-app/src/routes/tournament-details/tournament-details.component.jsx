@@ -128,6 +128,16 @@ const TournamentDetails = () => {
     }
   };
 
+  const getTournamentDistance = () => {
+    let start = new Date(start_date);
+    let end = new Date(end_date);
+    if (start < currentDate && end > currentDate) {
+      return `ends in ${formatDistance(currentDate, end)}`;
+    } else {
+      return `${formatDistance(currentDate, start)} long`
+    }
+  }
+
   return (
     tournament && (
       <div className="bg-white">
@@ -183,7 +193,7 @@ const TournamentDetails = () => {
                   </div>
                   <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center">
                     <ClockIcon className="h-8 text-leaf-600 w-8" />
-                    <p className="text-2xl tracking-tight text-gray-900">{formatDistance(currentDate, new Date(start_date))}</p>
+                    <p className="text-2xl tracking-tight text-gray-900">{`${getTournamentDistance()}`}</p>
                   </div>
                   <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center rounded">
                     <UserGroupIcon className="h-8 text-leaf-600" />

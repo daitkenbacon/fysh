@@ -62,6 +62,7 @@ const TournamentCard = ({ tournament }) => {
         setCanRegister(false);
       }
 
+
       setIsLoading(false);
     }
     if (author && users) {

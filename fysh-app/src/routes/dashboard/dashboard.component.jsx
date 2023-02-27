@@ -2,6 +2,8 @@ import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../contexts/user.context";
 
+import { formatDistance } from "date-fns";
+
 const DashboardPage = () => {
   const { currentUserDoc, upcomingTournaments, currentTournament } =
     useContext(UserContext);
@@ -21,12 +23,6 @@ const DashboardPage = () => {
       });
     }
   }, [currentUserDoc]);
-
-  const getTimeDiff = (startDate) => {
-    let today = new Date();
-    let timeDiff = startDate.getTime() - today.getTime();
-    return Math.ceil(timeDiff / (1000 * 3600 * 24));
-  };
 
   return (
     <div>
@@ -70,9 +66,7 @@ const DashboardPage = () => {
                   <div className="p-4 bg-blue-600 rounded-xl text-white">
                     <div className="font-bold text-2xl leading-none">
                       {currentTournament
-                        ? `${getTimeDiff(
-                            new Date(currentTournament.end_date.seconds * 1000)
-                          )} days`
+                        ? `${formatDistance(new Date(), new Date(currentTournament.end_date))} days`
                         : "n/a"}
                     </div>
                     <div className="mt-2">until tournament closes</div>
@@ -119,9 +113,12 @@ const DashboardPage = () => {
                   {upcomingTournaments &&
                     upcomingTournaments.map((tournament) => {
                       var startDate = new Date(
-                        tournament.start_date.seconds * 1000
+                        tournament.start_date
                       );
-                      var timeDiff = getTimeDiff(startDate);
+
+                      var endDate = new Date(tournament.end_date);
+
+                      var isNow = (new Date() > startDate && new Date() < endDate);
 
                       return (
                         <div
@@ -133,7 +130,7 @@ const DashboardPage = () => {
                               {startDate.toLocaleDateString()}
                             </div>
                             <div className="text-gray-400 text-xs">
-                              {timeDiff > 0 ? `in ${timeDiff} days` : "now"}
+                              {isNow ? 'now' : formatDistance(new Date(), startDate)}
                             </div>
                           </div>
                           <Link to={`/tournament/${tournament.id}`}>
