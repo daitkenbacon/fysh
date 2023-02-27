@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 
 import { UserContext } from "../../contexts/user.context";
 
+import { formatDistance } from "date-fns";
+
 import {
   updateDocInCollection,
   deleteDocInCollection,
@@ -39,6 +41,8 @@ const TournamentDetails = () => {
   const [isTournamentOpen, setIsTournamentOpen] = useState(false);
   const [trigger, setTrigger] = useState(false);
 
+  const currentDate = new Date();
+
   const handleOpenFormModal = () => {
     if (!participants.includes(currentUserUID)) {
       toast.error("You are not registered for this tournament!");
@@ -66,6 +70,8 @@ const TournamentDetails = () => {
     catches,
     winner,
     isOpen,
+    start_date,
+    end_date
   } = tournament;
 
   useEffect(() => {
@@ -73,17 +79,10 @@ const TournamentDetails = () => {
       const t = getTournament(id);
       setTournament(t);
       setStartDate(
-        new Date(t.start_date.seconds * 1000).toLocaleDateString("en-US")
+        new Date(t.start_date).toLocaleDateString("en-US")
       );
       setisHost(t.author === currentUserUID);
       setIsTournamentOpen(t.isOpen);
-
-      var d1 = new Date(t.start_date.seconds * 1000);
-      var d2 = new Date(t.end_date.seconds * 1000);
-
-      var timeDiff = d2.getTime() - d1.getTime();
-
-      setDaysOpen(Math.ceil(timeDiff / (1000 * 3600 * 24) + 1));
     }
   }, [tournaments]);
 
@@ -184,9 +183,7 @@ const TournamentDetails = () => {
                   </div>
                   <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center">
                     <ClockIcon className="h-8 text-leaf-600 w-8" />
-                    <p className="text-2xl tracking-tight text-gray-900">{`${daysOpen} ${
-                      daysOpen > 1 ? "Days" : "Day"
-                    }`}</p>
+                    <p className="text-2xl tracking-tight text-gray-900">{formatDistance(currentDate, new Date(start_date))}</p>
                   </div>
                   <div className="mt-5 flex flex-row content-center items-center gap-1 justify-center rounded">
                     <UserGroupIcon className="h-8 text-leaf-600" />

@@ -76,7 +76,7 @@ const CatchForm = (props) => {
       contentType: "image/jpeg",
     };
     const storageRef = ref(storage, `/catches/${selectedImage.name}`);
-    console.log(storageRef);
+    
     uploadString(storageRef, resizedImage, "data_url", newMetadata)
       .then((snapshot) => {
         getDownloadURL(snapshot.ref).then((URL) => {

@@ -6,6 +6,8 @@ import PropTypes from "prop-types";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import { StaticRouter } from "react-router-dom/server";
 
+import { format, parseISO } from 'date-fns'
+
 import {
   createDocInCollection,
   storage,
@@ -23,6 +25,8 @@ const TournamentForm = () => {
   const { currentUser, currentUserUID } = useContext(UserContext);
   const { addTournament } = useContext(TournamentsContext);
 
+  const MAX_COST = 10;
+
   const defaultFormFields = {
     name: "",
     description: "",
@@ -30,8 +34,8 @@ const TournamentForm = () => {
     registration_fee: 0,
     max_participants: 1,
     participants: [],
-    start_date: new Date(),
-    end_date: new Date(),
+    start_date: format(new Date(), "yyyy-MM-dd'T'HH:00"),
+    end_date: format(new Date(), "yyyy-MM-dd'T'HH:00"),
     image: "",
     author: currentUserUID,
     catches: [],
@@ -53,6 +57,8 @@ const TournamentForm = () => {
     registration_fee,
     max_participants,
     author,
+    start_date,
+    end_date,
   } = formFields;
 
   function Router(props) {
@@ -99,7 +105,7 @@ const TournamentForm = () => {
         addTournament(formFields);
         setFormFields(defaultFormFields);
         setIsLoading(false);
-        console.log("Finished uploading: ", formFields);
+        console.log("Finished submitting: ", formFields);
       } catch (err) {
         console.error(err);
       }
@@ -127,7 +133,7 @@ const TournamentForm = () => {
     };
     setIsUploading(true);
     const storageRef = ref(storage, `/tournaments/${selectedImage.name}`);
-    console.log(storageRef);
+
     uploadString(storageRef, resizedImage, "data_url", newMetadata)
       .then((snapshot) => {
         getDownloadURL(snapshot.ref).then((URL) => {
@@ -143,6 +149,7 @@ const TournamentForm = () => {
     const { name, value } = event.target;
 
     setFormFields({ ...formFields, [name]: value });
+    
   };
 
   const handleFileChange = async (event) => {
@@ -163,6 +170,25 @@ const TournamentForm = () => {
       }
     }
   };
+
+  const handleDateChange = (event) => {
+    const { name, value } = event.target;
+    let newDate = format(new Date(value), "yyyy-MM-dd'T'HH:00")
+    setFormFields({ ...formFields, [name]: newDate});
+  }
+
+  const handleNumberKeyDown = (event) => {
+    if (event.key === '-' || event.key === '.'){
+      event.preventDefault();
+    } else {
+      const value = Number(event.target.value + event.key);
+      if(value < 0) {
+        event.preventDefault();
+      } else if (value > MAX_COST) {
+        event.preventDefault();
+      }
+    }
+  }
 
   return (
     <>
@@ -197,6 +223,7 @@ const TournamentForm = () => {
                           type="text"
                           name="name"
                           id="name"
+                          required
                           value={name}
                           className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                           placeholder="Joe's Crab Catch for Cash"
@@ -219,6 +246,7 @@ const TournamentForm = () => {
                         name="description"
                         value={description}
                         rows={3}
+                        required
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="This is a crab-catching tournament for fyshers all over."
                       />
@@ -241,6 +269,7 @@ const TournamentForm = () => {
                         onChange={handleChange}
                         name="rules"
                         value={rules}
+                        required
                         rows={3}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="This is a crab-catching tournament for fyshers all over."
@@ -248,6 +277,64 @@ const TournamentForm = () => {
                     </div>
                     <p className="mt-2 text-sm text-gray-500">
                       Set the rules! Be specific, but simple.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="registration_fee"
+                      className="block text-md font-medium text-gray-700"
+                    >
+                      Registration Fee
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="registration_fee"
+                        type='number'
+                        min={0}
+                        max={10}
+                        onKeyDown={handleNumberKeyDown}
+                        onChange={handleChange}
+                        name="registration_fee"
+                        value={registration_fee}
+                        required
+                        rows={3}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        placeholder="$0"
+                      />
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      The cost of registering for your tournament. Maximum of $10.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="dates"
+                      className="block text-md font-medium text-gray-700"
+                    >
+                      Tournament Dates
+                    </label>
+                    <div className="mt-1 flex gap-2">
+                      <input 
+                        className="rounded"
+                        id='start_date' 
+                        onChange={handleDateChange} 
+                        name='start_date' 
+                        value={start_date}
+                        type='datetime-local'
+                        required/>
+                      <input 
+                        className="rounded"
+                        id='end_date' 
+                        onChange={handleDateChange} 
+                        name='end_date' 
+                        value={end_date}
+                        type='datetime-local'
+                        required/>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Choose when your tournament starts and ends.
                     </p>
                   </div>
 
@@ -282,6 +369,7 @@ const TournamentForm = () => {
                                 accept="image/*"
                                 onChange={handleFileChange}
                                 id="file-upload"
+                                required
                                 name="file-upload"
                                 className="border-2 rounded"
                               />
