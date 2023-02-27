@@ -1,6 +1,8 @@
 import * as React from "react";
 import { useEffect, useState, useContext } from "react";
 
+import { formatDistance } from "date-fns";
+
 import { updateDocInCollection } from "../../utils/firebase/firebase.utils";
 
 import { CalendarDaysIcon, UserGroupIcon } from "@heroicons/react/24/solid";
@@ -38,17 +40,17 @@ const TournamentCard = ({ tournament }) => {
   const currentDate = new Date();
 
   const getDateColor = () => {
-    let start = new Date(start_date.seconds * 1000);
-    let end = new Date(end_date.seconds * 1000);
+    let start = new Date(start_date);
+    let end = new Date(end_date);
     switch (true) {
-      case start < currentDate:
+      case start > currentDate:
         return "bg-red-600 text-white";
-      case start > currentDate && end > currentDate:
+      case start < currentDate && end > currentDate:
         return "bg-green-600 text-white";
     }
   };
 
-  const new_start_date = new Date(start_date.seconds * 1000).toLocaleDateString(
+  const new_start_date = new Date(start_date).toLocaleDateString(
     "en-US"
   );
 
@@ -59,11 +61,6 @@ const TournamentCard = ({ tournament }) => {
       } else if (participants.length >= max_participants) {
         setCanRegister(false);
       }
-
-      var d1 = new Date(start_date.seconds * 1000);
-      var d2 = new Date(end_date.seconds * 1000);
-      var timeDiff = d2.getTime() - d1.getTime();
-      setDaysOpen(Math.ceil(timeDiff / (1000 * 3600 * 24) + 1)); //If start/end are the same, tournament is open for one day.
 
       setIsLoading(false);
     }
@@ -174,7 +171,7 @@ const TournamentCard = ({ tournament }) => {
         <div className="flex flex-row gap-2 justify-center content-center">
           <ClockIcon className="h-5 w-5 " aria-hidden="true" />
           <p className="text-sm font-medium text-gray-900 justify-center content-center">
-            {daysOpen} Day{daysOpen > 1 ? "s" : ""}
+            {formatDistance(currentDate, new Date(start_date))}
           </p>
         </div>
       </div>
