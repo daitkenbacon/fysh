@@ -43,10 +43,10 @@ const TournamentCard = ({ tournament }) => {
     let start = new Date(start_date);
     let end = new Date(end_date);
     switch (true) {
-      case start > currentDate:
-        return "bg-red-600 text-white";
       case start < currentDate && end > currentDate:
         return "bg-green-600 text-white";
+      case start < currentDate:
+        return "bg-red-600 text-white";
     }
   };
 
