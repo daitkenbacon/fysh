@@ -31,8 +31,6 @@ const TournamentDetails = () => {
   const [startDate, setStartDate] = useState("");
   const [winnerCatch, setWinnerCatch] = useState(null);
 
-  const [daysOpen, setDaysOpen] = useState(1);
-
   const [selectedCatch, setSelectedCatch] = useState();
 
   const [openFormModal, setOpenFormModal] = useState(false);
@@ -40,6 +38,8 @@ const TournamentDetails = () => {
   const [isHost, setisHost] = useState(false);
   const [isTournamentOpen, setIsTournamentOpen] = useState(false);
   const [trigger, setTrigger] = useState(false);
+
+  const [isSubmissionsOpen, setIsSubmissionsOpen] = useState(false);
 
   const currentDate = new Date();
 
@@ -83,7 +83,15 @@ const TournamentDetails = () => {
       );
       setisHost(t.author === currentUserUID);
       setIsTournamentOpen(t.isOpen);
+
+      let today = new Date();
+      if (today > new Date(t.start_date) && today < new Date(t.end_date) && t.isOpen){
+        setIsSubmissionsOpen(true);
+      } else {
+        setIsSubmissionsOpen(false);
+      }
     }
+
   }, [tournaments]);
 
   useEffect(() => {
@@ -231,7 +239,7 @@ const TournamentDetails = () => {
               Catches{" "}
               {catches && catches.length > 0 ? `(${catches.length})` : ""}
             </h1>
-            {isTournamentOpen && (
+            {isSubmissionsOpen && (
               <button
                 disabled={!isTournamentOpen}
                 onClick={handleOpenFormModal}
@@ -241,6 +249,7 @@ const TournamentDetails = () => {
               </button>
             )}
           </div>
+          <p>Submissions are currently {`${isSubmissionsOpen ? 'open!' : 'closed.'}`}</p>
 
           <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {catches && //CatchCard list
@@ -285,7 +294,7 @@ const TournamentDetails = () => {
                         </h3>
                         <div>
                           <p className="text-sm text-gray-500">
-                            Submit your catch for the tournament!
+                            Submit your catch to compete in the tournament!
                           </p>
                         </div>
                       </div>
