@@ -171,7 +171,7 @@ const TournamentDetails = () => {
             <div className="lg:row-span-3 lg:mt-0 flex flex-col items-center">
               {!isOpen && (
                 <>
-                  <p>This tournament is closed.</p>
+                  <p>This tournament is over.</p>
                   <br />
                   <button
                     onClick={() => {
