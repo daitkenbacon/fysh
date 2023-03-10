@@ -3,10 +3,10 @@ import React from "react";
 import Resizer from "react-image-file-resizer";
 
 import PropTypes from "prop-types";
-import { MemoryRouter, useNavigate } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { StaticRouter } from "react-router-dom/server";
 
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
 
 import {
   createDocInCollection,
@@ -22,7 +22,7 @@ import { useEffect } from "react";
 import { TournamentsContext } from "../../contexts/tournaments.context";
 
 const TournamentForm = () => {
-  const { currentUser, currentUserUID } = useContext(UserContext);
+  const {  currentUserUID } = useContext(UserContext);
   const { addTournament } = useContext(TournamentsContext);
 
   const MAX_COST = 10;
@@ -39,17 +39,15 @@ const TournamentForm = () => {
     image: "",
     author: currentUserUID,
     catches: [],
-    isOpen: true,
+    isOpen: false,
   };
 
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [previewImage, setPreviewImage] = useState("");
   const [resizedImage, setResizedImage] = useState("");
   const [isImageUploaded, setIsImageUploaded] = useState(false);
-  const navigate = useNavigate();
   const {
     name,
     description,
@@ -192,6 +190,7 @@ const TournamentForm = () => {
 
   return (
     <>
+      <Toaster/>
       <div className="lg: pt-20 p-5 max-w-screen-xl mx-auto">
         <div className="md:grid md:grid-cols-3 md:gap-6">
           <div className="md:col-span-1">
@@ -305,6 +304,34 @@ const TournamentForm = () => {
                     </div>
                     <p className="mt-2 text-sm text-gray-500">
                       The cost of registering for your tournament. Maximum of $10.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="max_participants"
+                      className="block text-md font-medium text-gray-700"
+                    >
+                      Maximum Participants
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="max_participants"
+                        type='number'
+                        min={0}
+                        max={10}
+                        onKeyDown={handleNumberKeyDown}
+                        onChange={handleChange}
+                        name="max_participants"
+                        value={max_participants}
+                        required
+                        rows={3}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        placeholder="$0"
+                      />
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      How many fyshers can participate in your tournament.
                     </p>
                   </div>
 

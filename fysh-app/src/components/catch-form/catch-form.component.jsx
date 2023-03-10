@@ -8,15 +8,12 @@ import {
 } from "../../utils/firebase/firebase.utils";
 import {
   ref,
-  uploadBytesResumable,
   getDownloadURL,
-  updateMetadata,
   uploadString,
 } from "firebase/storage";
 
 import Resizer from "react-image-file-resizer";
 
-import { Box, Button, TextField } from "@mui/material";
 import { UserContext } from "../../contexts/user.context";
 import { TournamentsContext } from "../../contexts/tournaments.context";
 
@@ -35,7 +32,6 @@ const CatchForm = (props) => {
 
   const [formFields, setFormFields] = useState(defaultFormFields);
   const [isUploading, setIsUploading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [previewImage, setPreviewImage] = useState("");
   const [resizedImage, setResizedImage] = useState("");

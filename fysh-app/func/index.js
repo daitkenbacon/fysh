@@ -37,9 +37,10 @@ exports.makeUppercase = functions.firestore.document("/messages/{documentId}")
       return snap.ref.set({uppercase}, {merge: true});
     });
 
-exports.updateTournamentStatus = functions.pubsub.schedule('every 2 minutes').onRun(async (context) => {
+exports.updateTournamentStatus = functions.pubsub.schedule('every 2 minutes').timeZone('America/Chicago').onRun(async (context) => {
   const tournamentsRef = firestore.collection('tournaments');
-  const now = new Date();
+  const localeNow = new Date().toLocaleString("en-US", {timeZone: "America/Chicago"});
+  const now = new Date(localeNow);
   
 
   const tournamentsToClose = await tournamentsRef.where('isOpen', '==', true).get();
@@ -48,6 +49,7 @@ exports.updateTournamentStatus = functions.pubsub.schedule('every 2 minutes').on
     const end = new Date(tournamentData.end_date);
     if (end <= now) {
       await tournamentDoc.ref.update({ isOpen: false });
+      console.log(`Updated ${tournamentDoc.data().name} isOpen: false`);
     }
   });
   
@@ -59,6 +61,7 @@ exports.updateTournamentStatus = functions.pubsub.schedule('every 2 minutes').on
     const end = new Date(tournamentData.end_date)
     if (start <= now && end >= now) {
       await tournamentDoc.ref.update({ isOpen: true });
+      console.log(`Updated ${tournamentDoc.data().name} isOpen: true`);
     }
   });
   
