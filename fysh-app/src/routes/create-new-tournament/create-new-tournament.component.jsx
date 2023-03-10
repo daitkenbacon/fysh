@@ -173,7 +173,7 @@ const TournamentForm = () => {
 
   const handleDateChange = (event) => {
     const { name, value } = event.target;
-    let newDate = format(new Date(value), "yyyy-MM-dd'T'HH:00")
+    let newDate = format(new Date(value), "yyyy-MM-dd'T'HH:mm")
     setFormFields({ ...formFields, [name]: newDate});
   }
 
