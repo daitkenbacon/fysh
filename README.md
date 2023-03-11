@@ -28,6 +28,7 @@ Fyshers compete by submitting their catches whilst the tournament is open, and t
 ### Things I learned & utilized along the way
 
 * Google Cloud Functions for budget caps, database update events, and messaging
+  * Tournaments automatically open/close for beginning and ending of their set date-time.
 * SSO's through firebase auth with firestone for user data
 
 ## About Me
@@ -36,6 +37,6 @@ Fyshers compete by submitting their catches whilst the tournament is open, and t
 [Website (down)](https://danieltroyaitken.com)
 
 ## Things being finished
-- [ ] Cloud Functions for tournament updates (start, end, judging)
+- [x] Cloud Functions for tournament updates (start, end, judging)
 - [ ] Messaging for user updates
 - [ ] Captcha implementation
