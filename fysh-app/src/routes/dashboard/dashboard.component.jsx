@@ -66,7 +66,7 @@ const DashboardPage = () => {
                   <div className="p-4 bg-blue-600 rounded-xl text-white">
                     <div className="font-bold text-2xl leading-none">
                       {currentTournament
-                        ? `${formatDistance(new Date(), new Date(currentTournament.end_date))} days`
+                        ? `${formatDistance(new Date(), new Date(currentTournament.end_date))}`
                         : "n/a"}
                     </div>
                     <div className="mt-2">until tournament closes</div>
