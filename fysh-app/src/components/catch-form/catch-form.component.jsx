@@ -120,7 +120,6 @@ const CatchForm = (props) => {
       toast.error("You must upload your image before submitting.");
     } else if (currentUserUID) {
       try {
-        setIsSubmitting(true);
         await createDocInCollection(formFields, "catches").then((item) => {
           updateDocInCollection("tournaments", tournament.id, {
             catches: [...tournament.catches, item.data().id],

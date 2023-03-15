@@ -98,11 +98,9 @@ const TournamentForm = () => {
       return;
     } else if (currentUserUID) {
       try {
-        setIsLoading(true);
         await createDocInCollection(formFields, "tournaments");
         addTournament(formFields);
         setFormFields(defaultFormFields);
-        setIsLoading(false);
         console.log("Finished submitting: ", formFields);
       } catch (err) {
         console.error(err);

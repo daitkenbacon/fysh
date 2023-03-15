@@ -156,10 +156,10 @@ const TournamentCard = ({ tournament }) => {
             participants.length === max_participants
               ? "bg-red-600 p-1 rounded text-white"
               : ""
-          }flex gap-2 flex-row`}
+          } flex gap-2 flex-row`}
         >
-          <UserGroupIcon className="h-5 w-5" aria-hidden="true" />
-          <p className="text-sm font-medium text-gray-900">
+          <UserGroupIcon className="h-5 flex-row w-5" aria-hidden="true" />
+          <p className="text-sm font-medium flex-row">
             {participants ? participants.length : "0"}/{max_participants}
           </p>
         </div>
